@@ -16,7 +16,6 @@ BUTTON_COL  = "gray55"
 TEXT_COL    = "gray40"
 TEXT_FONT   = "Helvatical bold"
 
-root = tk.Tk()
 
 payload = []
 hosts   = []
@@ -47,25 +46,37 @@ def clearInput(img_array, image_list):
 def process():
     print("processed")
 
-def launch():
-    root.resizable(width=False, height=False)
-    root.title(APP_TITLE)
 
-    canvas = tk.Canvas(root, height=WINDOW_H, width=WINDOW_W, bg=GREY_DARK)
-    canvas.pack()
+def startMenu():
+    menu_frame = tk.Frame(root, bg=GREY_LIGHT)
+    menu_frame.place(relwidth=1, relheight=0.07, relx=0, rely=0)
+    create_lbl = tk.Label(menu_frame, text="OPERATION:", bg=GREY_LIGHT, fg=TEXT_COL, font=(TEXT_FONT,11))
+    create_lbl.place(x=15, y=7)
+    create_lbl = tk.Label(menu_frame, text="or", bg=GREY_LIGHT, fg=TEXT_COL, font=(TEXT_FONT,11))
+    create_lbl.place(x=260, y=7)
+    packImages = tk.Button(menu_frame, text="Pack Data", padx=25, pady=2, fg="white", bg=BUTTON_COL, command= lambda: packData())
+    packImages.place(x=130, y=5)
+    openImages = tk.Button(menu_frame, text="Extract Data", padx=25, pady=2, fg="white", bg=BUTTON_COL, command= lambda: openData())
+    openImages.place(x=300, y=5)
+    closeBtn = tk.Button(menu_frame, text="Quit", padx=2, pady=2, fg="white", bg=BUTTON_COL, command= lambda: quit())
+    closeBtn.place(x=460, y=5)
+
+
+def packData():
+
     
     data_frame = tk.Frame(root, bg=GREY_LIGHT)
-    data_frame.place(relwidth=0.95, relheight=0.4, relx=0.025, rely=0.025)
+    data_frame.place(relwidth=0.95, relheight=0.385, relx=0.025, rely=0.085)
     host_frame = tk.Frame(root, bg=GREY_LIGHT)
-    host_frame.place(relwidth=0.95, relheight=0.4, relx=0.025, rely=0.45)
+    host_frame.place(relwidth=0.95, relheight=0.385, relx=0.025, rely=0.5)
     info_frame = tk.Frame(root, bg=GREY_LIGHT)
-    info_frame.place(relwidth=0.95, relheight=0.1, relx=0.025, rely=0.875)
+    info_frame.place(relwidth=0.95, relheight=0.078, relx=0.025, rely=0.9)
 
     
     create_lbl = tk.Label(data_frame, text="PAYLOAD", bg=GREY_LIGHT, fg=TEXT_COL, font=(TEXT_FONT,11))
     create_lbl.place(x=15, y=10)
-    payload_list = Listbox(data_frame, height = 8, 
-                  width = 49,
+    payload_list = Listbox(data_frame, height = 6, 
+                  width = 40,
                   bg = GREY_DARK,
                   activestyle = 'dotbox', 
                   font = "Helvetica",
@@ -79,8 +90,8 @@ def launch():
 
     create_lbl = tk.Label(host_frame, text="CONTAINERS", bg=GREY_LIGHT, fg=TEXT_COL, font=(TEXT_FONT,11))
     create_lbl.place(x=15, y=10)
-    container_list = Listbox(host_frame, height = 8, 
-                  width = 49, 
+    container_list = Listbox(host_frame, height = 6, 
+                  width = 40, 
                   bg = GREY_DARK,
                   activestyle = 'dotbox', 
                   font = "Helvetica",
@@ -99,10 +110,28 @@ def launch():
     #entrybox for folder name to be made in container location
     
     clearImages = tk.Button(info_frame, text="PROCESS", padx=15, pady=2, fg="white", bg=BUTTON_COL, command= lambda: process())
-    clearImages.place(x=370, y=10)
+    clearImages.place(x=370, y=6)
 
+
+def openData():
+    #data_frame.place_forget()
+    #host_frame.place_forget()
+    #info_frame.place_forget()
+    
+    container_frame = tk.Frame(root, bg=GREY_LIGHT)
+    container_frame.place(relwidth=0.95, relheight=0.385, relx=0.025, rely=0.085)
+    output_frame = tk.Frame(root, bg=GREY_LIGHT)
+    output_frame.place(relwidth=0.95, relheight=0.385, relx=0.025, rely=0.5)
+    info_frame = tk.Frame(root, bg=GREY_LIGHT)
+    info_frame.place(relwidth=0.95, relheight=0.078, relx=0.025, rely=0.9)
+    
 
 #topleft pixel RGB is steg rounding, num containers for specific payload file, 
 
 if __name__ == "__main__":
-    launch()
+    root = tk.Tk()
+    root.resizable(width=False, height=False)
+    root.title(APP_TITLE)
+    canvas = tk.Canvas(root, height=WINDOW_H, width=WINDOW_W, bg=GREY_DARK).pack()
+    startMenu()
+
