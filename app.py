@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import filedialog, Text, Listbox, filedialog
+from tkinter import filedialog, Text, Listbox, filedialog, Entry
 import os
 import cv2
 
@@ -16,10 +16,12 @@ BUTTON_COL  = "gray55"
 TEXT_COL    = "gray40"
 TEXT_FONT   = "Helvatical bold"
 
+#input
+payload     = []
+hosts       = []
 
-payload = []
-hosts   = []
-
+#output
+containers  = []
 
 def loadImages(img_array, image_list):
     img_array = getSelection()
@@ -62,8 +64,23 @@ def startMenu():
     closeBtn.place(x=460, y=5)
 
 
-def packData():
+def makeImportFrame(frame, frame_title, img_array, img_list):
+    create_lbl = tk.Label(frame, text=frame_title, bg=GREY_LIGHT, fg=TEXT_COL, font=(TEXT_FONT,11))
+    create_lbl.place(x=15, y=10)
 
+    addImages = tk.Button(frame, text="Import", padx=10, pady=2, fg="white", bg=BUTTON_COL, command= lambda: loadImages(img_array, img_list))
+    addImages.place(x=320, y=5)
+    clearImages = tk.Button(frame, text="Clear", padx=15, pady=2, fg="white", bg=BUTTON_COL, command= lambda: clearInput(img_array, img_list))
+    clearImages.place(x=392, y=5)
+
+
+def packData():
+    global data_frame, host_frame, info_frame
+    try:
+        container_frame.destroy()
+        output_info_frame.destroy()
+    except:
+        pass
     
     data_frame = tk.Frame(root, bg=GREY_LIGHT)
     data_frame.place(relwidth=0.95, relheight=0.385, relx=0.025, rely=0.085)
@@ -72,9 +89,6 @@ def packData():
     info_frame = tk.Frame(root, bg=GREY_LIGHT)
     info_frame.place(relwidth=0.95, relheight=0.078, relx=0.025, rely=0.9)
 
-    
-    create_lbl = tk.Label(data_frame, text="PAYLOAD", bg=GREY_LIGHT, fg=TEXT_COL, font=(TEXT_FONT,11))
-    create_lbl.place(x=15, y=10)
     payload_list = Listbox(data_frame, height = 6, 
                   width = 40,
                   bg = GREY_DARK,
@@ -82,51 +96,57 @@ def packData():
                   font = "Helvetica",
                   fg = GREY_LIGHT)
     payload_list.place(x=15, y=40)
-    addImages = tk.Button(data_frame, text="Import", padx=10, pady=2, fg="white", bg=BUTTON_COL, command= lambda: loadImages(payload, payload_list))
-    addImages.place(x=320, y=5)
-    clearImages = tk.Button(data_frame, text="Clear", padx=15, pady=2, fg="white", bg=BUTTON_COL, command= lambda: clearInput(payload, payload_list))
-    clearImages.place(x=392, y=5)
+    makeImportFrame(data_frame, "PAYLOAD", payload, payload_list)
 
-
-    create_lbl = tk.Label(host_frame, text="CONTAINERS", bg=GREY_LIGHT, fg=TEXT_COL, font=(TEXT_FONT,11))
-    create_lbl.place(x=15, y=10)
-    container_list = Listbox(host_frame, height = 6, 
+    host_list = Listbox(host_frame, height = 6, 
                   width = 40, 
                   bg = GREY_DARK,
                   activestyle = 'dotbox', 
                   font = "Helvetica",
                   fg = GREY_LIGHT)
-    container_list.place(x=15, y=40)
-    addImages = tk.Button(host_frame, text="Import", padx=10, pady=2, fg="white", bg=BUTTON_COL, command= lambda: loadImages(hosts, container_list))
-    addImages.place(x=320, y=5)
-    clearImages = tk.Button(host_frame, text="Clear", padx=15, pady=2, fg="white", bg=BUTTON_COL, command= lambda: clearInput(hosts, container_list))
-    clearImages.place(x=392, y=5)
+    host_list.place(x=15, y=40)
+    makeImportFrame(host_frame, "CONTAINERS", hosts, host_list)
 
-
-    create_lbl = tk.Label(info_frame, text="INFO", bg=GREY_LIGHT, fg=TEXT_COL, font=(TEXT_FONT,11))
-    create_lbl.place(x=15, y=5)
-    #entrybox for prefix
-    #dropdown for steg rounding (5, 10, 20) ?
-    #entrybox for folder name to be made in container location
-    
+    info_lbl = tk.Label(info_frame, text="INFO", bg=GREY_LIGHT, fg=TEXT_COL, font=(TEXT_FONT,11))
+    info_lbl.place(x=15, y=5)
+    prefix_lbl = tk.Label(info_frame, text="Output Prefix:", bg=GREY_LIGHT, fg=TEXT_COL, font=(TEXT_FONT,9))
+    prefix_lbl.place(x=70, y=7)
+    prefix_entry = tk.Entry(info_frame, width=12)
+    prefix_entry.place(x=150, y=7)
     clearImages = tk.Button(info_frame, text="PROCESS", padx=15, pady=2, fg="white", bg=BUTTON_COL, command= lambda: process())
     clearImages.place(x=370, y=6)
 
+    
+    #increase host file by ~10% inc untill double size of payload dims
+    #read bytes, split into front and end halfs and place into two least sig bits for two values at a time
+
 
 def openData():
-    #data_frame.place_forget()
-    #host_frame.place_forget()
-    #info_frame.place_forget()
+    global container_frame, output_info_frame
+    try:
+        data_frame.destroy()#place_forget()
+        host_frame.destroy()#place_forget()
+        info_frame.destroy()#place_forget()
+    except:
+        pass
     
     container_frame = tk.Frame(root, bg=GREY_LIGHT)
     container_frame.place(relwidth=0.95, relheight=0.385, relx=0.025, rely=0.085)
-    output_frame = tk.Frame(root, bg=GREY_LIGHT)
-    output_frame.place(relwidth=0.95, relheight=0.385, relx=0.025, rely=0.5)
-    info_frame = tk.Frame(root, bg=GREY_LIGHT)
-    info_frame.place(relwidth=0.95, relheight=0.078, relx=0.025, rely=0.9)
+    #output_frame = tk.Frame(root, bg=GREY_LIGHT)
+    #output_frame.place(relwidth=0.95, relheight=0.385, relx=0.025, rely=0.5)
+    output_info_frame = tk.Frame(root, bg=GREY_LIGHT)
+    output_info_frame.place(relwidth=0.95, relheight=0.078, relx=0.025, rely=0.9)
+
+    container_list = Listbox(container_frame, height = 6, width = 40, bg = GREY_DARK, activestyle = 'dotbox', font = "Helvetica", fg = GREY_LIGHT)
+    container_list.place(x=15, y=40)
+
+    makeImportFrame(container_frame, "CONTAINERS", containers, container_list)
+
+
+    clearImages = tk.Button(output_info_frame, text="PROCESS", padx=15, pady=2, fg="white", bg=BUTTON_COL, command= lambda: process())
+    clearImages.place(x=370, y=6)
     
 
-#topleft pixel RGB is steg rounding, num containers for specific payload file, 
 
 if __name__ == "__main__":
     root = tk.Tk()
