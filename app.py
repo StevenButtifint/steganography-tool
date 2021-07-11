@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import filedialog, Text, Listbox, filedialog, Entry
 import os
 import cv2
+from PIL import Image
 
 
 APP_TITLE = "Steganography Packer"
@@ -23,13 +24,22 @@ hosts       = []
 #output
 containers  = []
 
+
 def loadImages(img_array, image_list):
-    img_array = getSelection()
+    selections = getSelection()    
+    setArrayItems(img_array, selections)
     file_list = getFileNames(img_array)
     setListBox(image_list, file_list)
 
+
+def setArrayItems(img_array, items):
+    for item in items:
+        img_array.append(item)
+
+
 def getSelection():
     return filedialog.askopenfilenames(parent=root, title='Select Images')
+
 
 def getFileNames(dirs):
     base_names = []
@@ -37,16 +47,41 @@ def getFileNames(dirs):
         base_names.append(os.path.basename(file))
     return base_names
 
+
 def setListBox(list_box, image_list):
     for i, img in enumerate(image_list):
         list_box.insert(i, img)
+
 
 def clearInput(img_array, image_list):
     img_array.clear()
     image_list.delete(0, 'end')
 
-def process():
-    print("processed")
+
+def extractData():
+    print("extract images")
+
+
+def packData(prefix_entry):
+    print("pack images")
+
+    prefix = prefix_entry.get()
+    
+    for index, img in enumerate(payload):
+        out_location = os.path.dirname(img) + "/" + prefix
+        try:
+            os.mkdir(out_location)
+        except:
+            pass
+        
+        host_index = index % len(hosts)
+        host_dir = hosts[host_index]
+        container = cv2.imread(host_dir)
+
+        #put host in container
+        
+        cv2.imwrite(out_location + "/" + "test.jpg", container)
+        
 
 
 def startMenu():
@@ -56,9 +91,9 @@ def startMenu():
     create_lbl.place(x=15, y=7)
     create_lbl = tk.Label(menu_frame, text="or", bg=GREY_LIGHT, fg=TEXT_COL, font=(TEXT_FONT,11))
     create_lbl.place(x=260, y=7)
-    packImages = tk.Button(menu_frame, text="Pack Data", padx=25, pady=2, fg="white", bg=BUTTON_COL, command= lambda: packData())
+    packImages = tk.Button(menu_frame, text="Pack Data", padx=25, pady=2, fg="white", bg=BUTTON_COL, command= lambda: packInterface())
     packImages.place(x=130, y=5)
-    openImages = tk.Button(menu_frame, text="Extract Data", padx=25, pady=2, fg="white", bg=BUTTON_COL, command= lambda: openData())
+    openImages = tk.Button(menu_frame, text="Extract Data", padx=25, pady=2, fg="white", bg=BUTTON_COL, command= lambda: extractInterface())
     openImages.place(x=300, y=5)
     closeBtn = tk.Button(menu_frame, text="Quit", padx=2, pady=2, fg="white", bg=BUTTON_COL, command= lambda: quit())
     closeBtn.place(x=460, y=5)
@@ -74,7 +109,7 @@ def makeImportFrame(frame, frame_title, img_array, img_list):
     clearImages.place(x=392, y=5)
 
 
-def packData():
+def packInterface():
     global data_frame, host_frame, info_frame
     try:
         container_frame.destroy()
@@ -113,7 +148,7 @@ def packData():
     prefix_lbl.place(x=70, y=7)
     prefix_entry = tk.Entry(info_frame, width=12)
     prefix_entry.place(x=150, y=7)
-    clearImages = tk.Button(info_frame, text="PROCESS", padx=15, pady=2, fg="white", bg=BUTTON_COL, command= lambda: process())
+    clearImages = tk.Button(info_frame, text="PROCESS", padx=15, pady=2, fg="white", bg=BUTTON_COL, command= lambda: packData(prefix_entry))
     clearImages.place(x=370, y=6)
 
     
@@ -121,7 +156,7 @@ def packData():
     #read bytes, split into front and end halfs and place into two least sig bits for two values at a time
 
 
-def openData():
+def extractInterface():
     global container_frame, output_info_frame
     try:
         data_frame.destroy()#place_forget()
@@ -143,7 +178,7 @@ def openData():
     makeImportFrame(container_frame, "CONTAINERS", containers, container_list)
 
 
-    clearImages = tk.Button(output_info_frame, text="PROCESS", padx=15, pady=2, fg="white", bg=BUTTON_COL, command= lambda: process())
+    clearImages = tk.Button(output_info_frame, text="PROCESS", padx=15, pady=2, fg="white", bg=BUTTON_COL, command= lambda: extractData())
     clearImages.place(x=370, y=6)
     
 
