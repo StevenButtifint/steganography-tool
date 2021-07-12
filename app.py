@@ -3,7 +3,7 @@ from tkinter import filedialog, Text, Listbox, filedialog, Entry
 import os
 import cv2
 from PIL import Image
-
+import numpy as np
 
 APP_TITLE = "Steganography Packer"
 WINDOW_H = 500
@@ -76,11 +76,49 @@ def packData(prefix_entry):
         
         host_index = index % len(hosts)
         host_dir = hosts[host_index]
+
+        data = cv2.imread(img)
         container = cv2.imread(host_dir)
 
-        #put host in container
+        #make host 2x
+        data_h, data_w, _ = data.shape
+        container = cv2.resize(container, dsize=(int(data_w*2), int(data_h*2)), interpolation=cv2.INTER_CUBIC)
+
+        for x_pixel in range(data_w):
+            for y_pixel in range(data_h):
+
+                data_pix = data[y_pixel][x_pixel]
+                cont_pix_front = container[y_pixel*2][x_pixel*2]
+                cont_pix_back = container[y_pixel*2+1][x_pixel*2+1]
+
+                b_front = "{0:08b}".format(cont_pix_front[0])[0:4] + "{0:08b}".format(data_pix[0])[0:4]
+                b_front = int(b_front, 2)
+                b_back = "{0:08b}".format(cont_pix_back[0])[0:4] + "{0:08b}".format(data_pix[0])[4:8]
+                b_back = int(b_back, 2)
+
+                g_front = "{0:08b}".format(cont_pix_front[1])[0:4] + "{0:08b}".format(data_pix[1])[0:4]
+                g_front = int(g_front, 2)
+                g_back = "{0:08b}".format(cont_pix_back[1])[0:4] + "{0:08b}".format(data_pix[1])[4:8]
+                g_back = int(g_back, 2)
+                
+                r_front = "{0:08b}".format(cont_pix_front[2])[0:4] + "{0:08b}".format(data_pix[2])[0:4]
+                r_front = int(r_front, 2)
+                r_back = "{0:08b}".format(cont_pix_back[2])[0:4] + "{0:08b}".format(data_pix[2])[4:8]
+                r_back = int(r_back, 2)
+
+
+                container[y_pixel*2][x_pixel*2][0] = b_front
+                container[y_pixel*2+1][x_pixel*2+1][0] = b_back
+                
+                container[y_pixel*2][x_pixel*2][1] = g_front
+                container[y_pixel*2+1][x_pixel*2+1][1] = g_back
+                
+                container[y_pixel*2][x_pixel*2][2] = r_front
+                container[y_pixel*2+1][x_pixel*2+1][2] = r_back
+
         
-        cv2.imwrite(out_location + "/" + "test.jpg", container)
+        ####append converted name into end of container name
+        cv2.imwrite(out_location + "/" + str(index) + "-" + str(prefix) + ".jpg", container)
         
 
 
