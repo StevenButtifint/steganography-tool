@@ -61,6 +61,11 @@ def clearInput(img_array, image_list):
 def extractData():
     print("extract images")
 
+    for container in containers:
+        pass
+        
+        
+
 
 def packData(prefix_entry):
     print("pack images")
@@ -73,6 +78,8 @@ def packData(prefix_entry):
             os.mkdir(out_location)
         except:
             pass
+
+        data_name = os.path.basename(payload[index]).split(".")[0] + "-" + os.path.basename(payload[index]).split(".")[1]
         
         host_index = index % len(hosts)
         host_dir = hosts[host_index]
@@ -118,7 +125,7 @@ def packData(prefix_entry):
 
         
         ####append converted name into end of container name
-        cv2.imwrite(out_location + "/" + str(index) + "-" + str(prefix) + ".jpg", container)
+        cv2.imwrite(out_location + "/" + str(index) + "-" + str(prefix) + "-" + str(data_name) + ".jpg", container)
         
 
 
@@ -147,6 +154,10 @@ def makeImportFrame(frame, frame_title, img_array, img_list):
     clearImages.place(x=392, y=5)
 
 
+def makeListbox(frame):
+    return Listbox(frame, height=6, width=40, bg=GREY_DARK, activestyle='dotbox', font="Helvetica", fg=GREY_LIGHT)
+
+
 def packInterface():
     global data_frame, host_frame, info_frame
     try:
@@ -162,21 +173,11 @@ def packInterface():
     info_frame = tk.Frame(root, bg=GREY_LIGHT)
     info_frame.place(relwidth=0.95, relheight=0.078, relx=0.025, rely=0.9)
 
-    payload_list = Listbox(data_frame, height = 6, 
-                  width = 40,
-                  bg = GREY_DARK,
-                  activestyle = 'dotbox', 
-                  font = "Helvetica",
-                  fg = GREY_LIGHT)
+    payload_list = makeListbox(data_frame)
     payload_list.place(x=15, y=40)
     makeImportFrame(data_frame, "PAYLOAD", payload, payload_list)
 
-    host_list = Listbox(host_frame, height = 6, 
-                  width = 40, 
-                  bg = GREY_DARK,
-                  activestyle = 'dotbox', 
-                  font = "Helvetica",
-                  fg = GREY_LIGHT)
+    host_list = makeListbox(host_frame)
     host_list.place(x=15, y=40)
     makeImportFrame(host_frame, "CONTAINERS", hosts, host_list)
 
@@ -188,10 +189,6 @@ def packInterface():
     prefix_entry.place(x=150, y=7)
     clearImages = tk.Button(info_frame, text="PROCESS", padx=15, pady=2, fg="white", bg=BUTTON_COL, command= lambda: packData(prefix_entry))
     clearImages.place(x=370, y=6)
-
-    
-    #increase host file by ~10% inc untill double size of payload dims
-    #read bytes, split into front and end halfs and place into two least sig bits for two values at a time
 
 
 def extractInterface():
@@ -218,7 +215,6 @@ def extractInterface():
 
     clearImages = tk.Button(output_info_frame, text="PROCESS", padx=15, pady=2, fg="white", bg=BUTTON_COL, command= lambda: extractData())
     clearImages.place(x=370, y=6)
-    
 
 
 if __name__ == "__main__":
