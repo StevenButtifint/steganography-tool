@@ -23,7 +23,7 @@ hosts       = []
 
 #output
 containers  = []
-
+out_loc = [0]
 
 def loadImages(img_array, image_list):
     selections = getSelection()    
@@ -40,6 +40,16 @@ def setArrayItems(img_array, items):
 def getSelection():
     return filedialog.askopenfilenames(parent=root, title='Select Images')
 
+
+def setOutputLocation(output_location):
+    location = getDirectory()
+    output_location.insert(0, location)
+    out_loc[0] = location
+    
+
+
+def getDirectory():
+    return filedialog.askdirectory(parent=root, title='Select Output Folder Location')
 
 def getFileNames(dirs):
     base_names = []
@@ -58,14 +68,44 @@ def clearInput(img_array, image_list):
     image_list.delete(0, 'end')
 
 
-def extractData():
+def extractData(out_folder_entry):
     print("extract images")
-
-    for container in containers:
+    #add check that output location is given and selections are images
+    
+    out_location = out_loc[0] + "/" + out_folder_entry.get()
+    try:
+        os.mkdir(out_location)
+    except:
         pass
-        
-        
+    for container in containers:
 
+        container_name_segs = os.path.basename(container).split(".")[0].split("-")
+        out_name = container_name_segs[2] + "." + container_name_segs[3]
+        
+        current_cont = cv2.imread(container)
+        current_out = np.zeros(shape=(int(current_cont.shape[0]),int(current_cont.shape[1]//2),3))
+
+        x_out = 0
+        for pix_row in range(0, current_cont.shape[0], 1):
+            for pix_col in range(0, current_cont.shape[1], 2):
+
+                cont_pix_front = current_cont[pix_row][pix_col]
+                cont_pix_back = current_cont[pix_row][pix_col+1]
+
+                b_pix = "{0:08b}".format(cont_pix_front[0])[4:8] + "{0:08b}".format(cont_pix_back[0])[4:8]
+                b_pix = int(b_pix, 2)
+                g_pix = "{0:08b}".format(cont_pix_front[1])[4:8] + "{0:08b}".format(cont_pix_back[1])[4:8]
+                g_pix = int(g_pix, 2)
+                r_pix = "{0:08b}".format(cont_pix_front[2])[4:8] + "{0:08b}".format(cont_pix_back[2])[4:8]
+                r_pix = int(r_pix, 2)
+                
+                current_out[pix_row][x_out][0] = b_pix
+                current_out[pix_row][x_out][1] = g_pix
+                current_out[pix_row][x_out][2] = r_pix
+                x_out += 1
+            x_out = 0
+                
+        cv2.imwrite(out_location + "/" + str(out_name), current_out)
 
 def packData(prefix_entry):
     print("pack images")
@@ -89,14 +129,20 @@ def packData(prefix_entry):
 
         #make host 2x
         data_h, data_w, _ = data.shape
-        container = cv2.resize(container, dsize=(int(data_w*2), int(data_h*2)), interpolation=cv2.INTER_CUBIC)
+        container = cv2.resize(container, dsize=(int(data_w*2), int(data_h)), interpolation=cv2.INTER_CUBIC)
 
-        for x_pixel in range(data_w):
-            for y_pixel in range(data_h):
+        x_pix = 0
+        
+        for pix_row in range(0, container.shape[0], 1):
+            for pix_col in range(0, container.shape[1], 2):
 
-                data_pix = data[y_pixel][x_pixel]
-                cont_pix_front = container[y_pixel*2][x_pixel*2]
-                cont_pix_back = container[y_pixel*2+1][x_pixel*2+1]
+               # print(pix_row, pix_col, x_pix)
+               # print(container.shape)
+
+                data_pix = data[pix_row][x_pix]
+                
+                cont_pix_front = container[pix_row][pix_col]
+                cont_pix_back = container[pix_row][pix_col+1]
 
                 b_front = "{0:08b}".format(cont_pix_front[0])[0:4] + "{0:08b}".format(data_pix[0])[0:4]
                 b_front = int(b_front, 2)
@@ -114,15 +160,17 @@ def packData(prefix_entry):
                 r_back = int(r_back, 2)
 
 
-                container[y_pixel*2][x_pixel*2][0] = b_front
-                container[y_pixel*2+1][x_pixel*2+1][0] = b_back
+                container[pix_row][pix_col][0] = b_front
+                container[pix_row][pix_col+1][0] = b_back
                 
-                container[y_pixel*2][x_pixel*2][1] = g_front
-                container[y_pixel*2+1][x_pixel*2+1][1] = g_back
+                container[pix_row][pix_col][1] = g_front
+                container[pix_row][pix_col+1][1] = g_back
                 
-                container[y_pixel*2][x_pixel*2][2] = r_front
-                container[y_pixel*2+1][x_pixel*2+1][2] = r_back
+                container[pix_row][pix_col][2] = r_front
+                container[pix_row][pix_col+1][2] = r_back
 
+                x_pix += 1
+            x_pix = 0
         
         ####append converted name into end of container name
         cv2.imwrite(out_location + "/" + str(index) + "-" + str(prefix) + "-" + str(data_name) + ".jpg", container)
@@ -202,8 +250,8 @@ def extractInterface():
     
     container_frame = tk.Frame(root, bg=GREY_LIGHT)
     container_frame.place(relwidth=0.95, relheight=0.385, relx=0.025, rely=0.085)
-    #output_frame = tk.Frame(root, bg=GREY_LIGHT)
-    #output_frame.place(relwidth=0.95, relheight=0.385, relx=0.025, rely=0.5)
+    output_frame = tk.Frame(root, bg=GREY_LIGHT)
+    output_frame.place(relwidth=0.95, relheight=0.385, relx=0.025, rely=0.5)
     output_info_frame = tk.Frame(root, bg=GREY_LIGHT)
     output_info_frame.place(relwidth=0.95, relheight=0.078, relx=0.025, rely=0.9)
 
@@ -212,8 +260,24 @@ def extractInterface():
 
     makeImportFrame(container_frame, "CONTAINERS", containers, container_list)
 
+    create_lbl = tk.Label(output_frame, text="OUTPUT OPTIONS", bg=GREY_LIGHT, fg=TEXT_COL, font=(TEXT_FONT,11))
+    create_lbl.place(x=15, y=10)
+    #addImages = tk.Button(output_frame, text="Import", padx=10, pady=2, fg="white", bg=BUTTON_COL, command= lambda: loadImages(img_array, img_list))
+    #addImages.place(x=320, y=5)
 
-    clearImages = tk.Button(output_info_frame, text="PROCESS", padx=15, pady=2, fg="white", bg=BUTTON_COL, command= lambda: extractData())
+    output_location = Listbox(output_frame, height = 1, width = 40, bg = GREY_DARK, activestyle = 'dotbox', font = "Helvetica", fg = GREY_LIGHT)
+    output_location.place(x=15, y=40)
+    
+    clearImages = tk.Button(output_frame, text="Set Output Location", padx=15, pady=2, fg="white", bg=BUTTON_COL, command= lambda: setOutputLocation(output_location))
+    clearImages.place(x=310, y=5)
+
+    info_lbl = tk.Label(output_info_frame, text="INFO", bg=GREY_LIGHT, fg=TEXT_COL, font=(TEXT_FONT,11))
+    info_lbl.place(x=15, y=5)
+    prefix_lbl = tk.Label(output_info_frame, text="Output Folder:", bg=GREY_LIGHT, fg=TEXT_COL, font=(TEXT_FONT,9))
+    prefix_lbl.place(x=70, y=7)
+    out_folder_entry = tk.Entry(output_info_frame, width=12)
+    out_folder_entry.place(x=150, y=7)
+    clearImages = tk.Button(output_info_frame, text="PROCESS", padx=15, pady=2, fg="white", bg=BUTTON_COL, command= lambda: extractData(out_folder_entry))
     clearImages.place(x=370, y=6)
 
 
