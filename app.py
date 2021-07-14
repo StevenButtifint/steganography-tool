@@ -80,7 +80,7 @@ def extractData(out_folder_entry):
     for container in containers:
 
         container_name_segs = os.path.basename(container).split(".")[0].split("-")
-        out_name = container_name_segs[2] + "." + container_name_segs[3]
+        out_name = container_name_segs[2] + ".png"
         
         current_cont = cv2.imread(container)
         current_out = np.zeros(shape=(int(current_cont.shape[0]),int(current_cont.shape[1]//2),3))
@@ -99,9 +99,9 @@ def extractData(out_folder_entry):
                 r_pix = "{0:08b}".format(cont_pix_front[2])[4:8] + "{0:08b}".format(cont_pix_back[2])[4:8]
                 r_pix = int(r_pix, 2)
                 
-                current_out[pix_row][x_out][0] = b_pix
+                current_out[pix_row][x_out][0] = r_pix
                 current_out[pix_row][x_out][1] = g_pix
-                current_out[pix_row][x_out][2] = r_pix
+                current_out[pix_row][x_out][2] = b_pix
                 x_out += 1
             x_out = 0
                 
@@ -119,7 +119,7 @@ def packData(prefix_entry):
         except:
             pass
 
-        data_name = os.path.basename(payload[index]).split(".")[0] + "-" + os.path.basename(payload[index]).split(".")[1]
+        data_name = os.path.basename(payload[index]).split(".")[0]
         
         host_index = index % len(hosts)
         host_dir = hosts[host_index]
@@ -160,20 +160,19 @@ def packData(prefix_entry):
                 r_back = int(r_back, 2)
 
 
-                container[pix_row][pix_col][0] = b_front
-                container[pix_row][pix_col+1][0] = b_back
+                container[pix_row][pix_col][0] = r_front
+                container[pix_row][pix_col+1][0] = r_back
                 
                 container[pix_row][pix_col][1] = g_front
                 container[pix_row][pix_col+1][1] = g_back
                 
-                container[pix_row][pix_col][2] = r_front
-                container[pix_row][pix_col+1][2] = r_back
+                container[pix_row][pix_col][2] = b_front
+                container[pix_row][pix_col+1][2] = b_back
 
                 x_pix += 1
             x_pix = 0
         
-        ####append converted name into end of container name
-        cv2.imwrite(out_location + "/" + str(index) + "-" + str(prefix) + "-" + str(data_name) + ".jpg", container)
+        cv2.imwrite(out_location + "/" + str(index) + "-" + str(prefix) + "-" + str(data_name) + ".png", container)
         
 
 
