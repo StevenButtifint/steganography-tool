@@ -32,6 +32,14 @@ def loadImages(img_array, image_list):
     setListBox(image_list, file_list)
 
 
+def loadFolderSystem(img_array, image_list):
+    print("load Folder System")
+    folderSystem = getDirectory()
+    list_tag = os.path.basename(folderSystem)
+    img_array.append("#FS" + folderSystem)
+    setListBox(image_list, ["Folder System: " + folderSystem])
+    
+
 def setArrayItems(img_array, items):
     for item in items:
         img_array.append(item)
@@ -47,9 +55,28 @@ def setOutputLocation(output_location):
     out_loc[0] = location
     
 
-
 def getDirectory():
-    return filedialog.askdirectory(parent=root, title='Select Output Folder Location')
+    return filedialog.askdirectory(parent=root, title='Select Folder Location')
+
+
+def getSubDirItems(start_location):
+    all_images = []
+    uncharted_subdirs = []
+    uncharted_subdirs.append(start_location)
+    
+    #while there is still some folders to check
+    while len(uncharted_subdirs) > 0:
+        current_location = uncharted_subdirs[0]
+        location_items = os.listdir(current_location)
+        for item in location_items:
+            if "." in item:
+                if item.lower().endswith(('png', 'jpg', 'jpeg')):
+                    all_images.append(current_location + "/" + item)
+            else:
+                uncharted_subdirs.append(current_location + "/" + item)
+        del uncharted_subdirs[0]
+    return all_images
+
 
 def getFileNames(dirs):
     base_names = []
@@ -78,7 +105,7 @@ def extractData(out_folder_entry):
     except:
         pass
     for container in containers:
-
+        #use PNG for lossless
         container_name_segs = os.path.basename(container).split(".")[0].split("-")
         out_name = container_name_segs[2] + ".png"
         
@@ -88,31 +115,34 @@ def extractData(out_folder_entry):
         x_out = 0
         for pix_row in range(0, current_cont.shape[0], 1):
             for pix_col in range(0, current_cont.shape[1], 2):
-
                 cont_pix_front = current_cont[pix_row][pix_col]
                 cont_pix_back = current_cont[pix_row][pix_col+1]
-
                 b_pix = "{0:08b}".format(cont_pix_front[0])[4:8] + "{0:08b}".format(cont_pix_back[0])[4:8]
                 b_pix = int(b_pix, 2)
                 g_pix = "{0:08b}".format(cont_pix_front[1])[4:8] + "{0:08b}".format(cont_pix_back[1])[4:8]
                 g_pix = int(g_pix, 2)
                 r_pix = "{0:08b}".format(cont_pix_front[2])[4:8] + "{0:08b}".format(cont_pix_back[2])[4:8]
                 r_pix = int(r_pix, 2)
-                
                 current_out[pix_row][x_out][0] = r_pix
                 current_out[pix_row][x_out][1] = g_pix
                 current_out[pix_row][x_out][2] = b_pix
                 x_out += 1
             x_out = 0
-                
         cv2.imwrite(out_location + "/" + str(out_name), current_out)
+
 
 def packData(prefix_entry):
     print("pack images")
 
     prefix = prefix_entry.get()
+
+    for index, img in enumerate(payload):
+        if img.startswith("#FS"):
+            del payload[index]
+            #extract all images from subfolders and all to payload array before main loop starts
     
     for index, img in enumerate(payload):
+
         out_location = os.path.dirname(img) + "/" + prefix
         try:
             os.mkdir(out_location)
@@ -162,10 +192,8 @@ def packData(prefix_entry):
 
                 container[pix_row][pix_col][0] = r_front
                 container[pix_row][pix_col+1][0] = r_back
-                
                 container[pix_row][pix_col][1] = g_front
                 container[pix_row][pix_col+1][1] = g_back
-                
                 container[pix_row][pix_col][2] = b_front
                 container[pix_row][pix_col+1][2] = b_back
 
@@ -194,11 +222,12 @@ def startMenu():
 def makeImportFrame(frame, frame_title, img_array, img_list):
     create_lbl = tk.Label(frame, text=frame_title, bg=GREY_LIGHT, fg=TEXT_COL, font=(TEXT_FONT,11))
     create_lbl.place(x=15, y=10)
-
-    addImages = tk.Button(frame, text="Import", padx=10, pady=2, fg="white", bg=BUTTON_COL, command= lambda: loadImages(img_array, img_list))
-    addImages.place(x=320, y=5)
+    addDir = tk.Button(frame, text="Import Folder System", padx=5, pady=2, fg="white", bg=BUTTON_COL, command= lambda: loadFolderSystem(img_array, img_list))
+    addDir.place(x=140, y=5)
+    addImages = tk.Button(frame, text="Import Image", padx=5, pady=2, fg="white", bg=BUTTON_COL, command= lambda: loadImages(img_array, img_list))
+    addImages.place(x=280, y=5)
     clearImages = tk.Button(frame, text="Clear", padx=15, pady=2, fg="white", bg=BUTTON_COL, command= lambda: clearInput(img_array, img_list))
-    clearImages.place(x=392, y=5)
+    clearImages.place(x=395, y=5)
 
 
 def makeListbox(frame):
