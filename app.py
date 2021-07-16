@@ -23,7 +23,7 @@ hosts       = []
 
 #output
 containers  = []
-out_loc = [0]
+out_loc = ""
 
 def loadImages(img_array, image_list):
     selections = getSelection()    
@@ -38,8 +38,15 @@ def loadFolderSystem(img_array, image_list):
     list_tag = os.path.basename(folderSystem)
     img_array.append("#FS" + folderSystem)
     setListBox(image_list, ["Folder System: " + folderSystem])
-    
 
+
+def setOutputLocation(out_location, image_list):
+    location = getDirectory()
+    out_location = location
+    image_list.delete(0,'end')
+    setListBox(image_list, [location])
+
+    
 def setArrayItems(img_array, items):
     for item in items:
         img_array.append(item)
@@ -48,12 +55,6 @@ def setArrayItems(img_array, items):
 def getSelection():
     return filedialog.askopenfilenames(parent=root, title='Select Images')
 
-
-def setOutputLocation(output_location):
-    location = getDirectory()
-    output_location.insert(0, location)
-    out_loc[0] = location
-    
 
 def getDirectory():
     return filedialog.askdirectory(parent=root, title='Select Folder Location')
@@ -99,7 +100,7 @@ def extractData(out_folder_entry):
     print("extract images")
     #add check that output location is given and selections are images
     
-    out_location = out_loc[0] + "/" + out_folder_entry.get()
+    out_location = out_loc + "/" + out_folder_entry.get()
     try:
         os.mkdir(out_location)
     except:
@@ -131,18 +132,31 @@ def extractData(out_folder_entry):
         cv2.imwrite(out_location + "/" + str(out_name), current_out)
 
 
-def packData(prefix_entry):
+def packData(prefix_entry):    #need to save the subfolder locations to the file names 
     print("pack images")
 
     prefix = prefix_entry.get()
 
+    #extract all images from subfolders and all to payload array before main loop starts
     for index, img in enumerate(payload):
         if img.startswith("#FS"):
+            subItems = getSubDirItems(img)###make each entry have a custom prefix and identifyer for the sub folder system
+            for item in subItems:
+                payload.append("#" + img + "#" + item)
             del payload[index]
-            #extract all images from subfolders and all to payload array before main loop starts
-    
+
+    ###############################fin this implementation folder system
+    img_loc = ""
+    img_name = ""
     for index, img in enumerate(payload):
 
+        if img.startswith("#"):
+            img = img.split("#")
+            
+            img_name = img[1].replace(img[0], '').replace("#", '').replace("/", '#')
+            img_loc = img[1]
+            
+            
         out_location = os.path.dirname(img) + "/" + prefix
         try:
             os.mkdir(out_location)
@@ -230,8 +244,19 @@ def makeImportFrame(frame, frame_title, img_array, img_list):
     clearImages.place(x=395, y=5)
 
 
-def makeListbox(frame):
-    return Listbox(frame, height=6, width=40, bg=GREY_DARK, activestyle='dotbox', font="Helvetica", fg=GREY_LIGHT)
+def makeOutputFrame(frame, frame_title, out_loc, img_list, folder_name, operation):
+    info_lbl = tk.Label(frame, text=frame_title, bg=GREY_LIGHT, fg=TEXT_COL, font=(TEXT_FONT,11))
+    info_lbl.place(x=15, y=5)
+    addDir = tk.Button(frame, text="Set Output Location", padx=5, pady=2, fg="white", bg=BUTTON_COL, command= lambda: setOutputLocation(out_loc, img_list))
+    addDir.place(x=100, y=5)
+    prefix_lbl = tk.Label(frame, text="Folder:", bg=GREY_LIGHT, fg=TEXT_COL, font=(TEXT_FONT,9))
+    prefix_lbl.place(x=235, y=7)
+    clearImages = tk.Button(frame, text="PROCESS", padx=10, pady=2, fg="white", bg=BUTTON_COL, command= lambda: operation(folder_name))
+    clearImages.place(x=380, y=6)
+
+
+def makeListbox(frame, h, w):
+    return Listbox(frame, height=h, width=w, bg=GREY_DARK, activestyle='dotbox', font="Helvetica", fg=GREY_LIGHT)
 
 
 def packInterface():
@@ -243,28 +268,27 @@ def packInterface():
         pass
     
     data_frame = tk.Frame(root, bg=GREY_LIGHT)
-    data_frame.place(relwidth=0.95, relheight=0.385, relx=0.025, rely=0.085)
+    data_frame.place(relwidth=0.95, relheight=0.355, relx=0.025, rely=0.085)
     host_frame = tk.Frame(root, bg=GREY_LIGHT)
-    host_frame.place(relwidth=0.95, relheight=0.385, relx=0.025, rely=0.5)
+    host_frame.place(relwidth=0.95, relheight=0.355, relx=0.025, rely=0.46)
     info_frame = tk.Frame(root, bg=GREY_LIGHT)
-    info_frame.place(relwidth=0.95, relheight=0.078, relx=0.025, rely=0.9)
+    info_frame.place(relwidth=0.95, relheight=0.138, relx=0.025, rely=0.84)
 
-    payload_list = makeListbox(data_frame)
+    payload_list = makeListbox(data_frame, 5, 40)
     payload_list.place(x=15, y=40)
     makeImportFrame(data_frame, "PAYLOAD", payload, payload_list)
 
-    host_list = makeListbox(host_frame)
+    host_list = makeListbox(host_frame, 5, 40)
     host_list.place(x=15, y=40)
     makeImportFrame(host_frame, "CONTAINERS", hosts, host_list)
 
-    info_lbl = tk.Label(info_frame, text="INFO", bg=GREY_LIGHT, fg=TEXT_COL, font=(TEXT_FONT,11))
-    info_lbl.place(x=15, y=5)
-    prefix_lbl = tk.Label(info_frame, text="Output Prefix:", bg=GREY_LIGHT, fg=TEXT_COL, font=(TEXT_FONT,9))
-    prefix_lbl.place(x=70, y=7)
-    prefix_entry = tk.Entry(info_frame, width=12)
-    prefix_entry.place(x=150, y=7)
-    clearImages = tk.Button(info_frame, text="PROCESS", padx=15, pady=2, fg="white", bg=BUTTON_COL, command= lambda: packData(prefix_entry))
-    clearImages.place(x=370, y=6)
+    folder_name = tk.Entry(info_frame, width=12)
+    folder_name.place(x=280, y=10)
+    output_list = makeListbox(info_frame, 1, 40)
+    output_list.place(x=15, y=40)
+    makeOutputFrame(info_frame, "OUTPUT", out_loc, output_list, folder_name, packData)
+
+
 
 
 def extractInterface():
@@ -277,36 +301,45 @@ def extractInterface():
         pass
     
     container_frame = tk.Frame(root, bg=GREY_LIGHT)
-    container_frame.place(relwidth=0.95, relheight=0.385, relx=0.025, rely=0.085)
+    container_frame.place(relwidth=0.95, relheight=0.355, relx=0.025, rely=0.085)
     output_frame = tk.Frame(root, bg=GREY_LIGHT)
-    output_frame.place(relwidth=0.95, relheight=0.385, relx=0.025, rely=0.5)
+    output_frame.place(relwidth=0.95, relheight=0.355, relx=0.025, rely=0.46)
     output_info_frame = tk.Frame(root, bg=GREY_LIGHT)
-    output_info_frame.place(relwidth=0.95, relheight=0.078, relx=0.025, rely=0.9)
+    output_info_frame.place(relwidth=0.95, relheight=0.138, relx=0.025, rely=0.84)
 
-    container_list = Listbox(container_frame, height = 6, width = 40, bg = GREY_DARK, activestyle = 'dotbox', font = "Helvetica", fg = GREY_LIGHT)
+    container_list = makeListbox(container_frame, 5, 40)
     container_list.place(x=15, y=40)
 
     makeImportFrame(container_frame, "CONTAINERS", containers, container_list)
 
-    create_lbl = tk.Label(output_frame, text="OUTPUT OPTIONS", bg=GREY_LIGHT, fg=TEXT_COL, font=(TEXT_FONT,11))
-    create_lbl.place(x=15, y=10)
+    #create_lbl = tk.Label(output_frame, text="OUTPUT OPTIONS", bg=GREY_LIGHT, fg=TEXT_COL, font=(TEXT_FONT,11))
+    #create_lbl.place(x=15, y=10)
     #addImages = tk.Button(output_frame, text="Import", padx=10, pady=2, fg="white", bg=BUTTON_COL, command= lambda: loadImages(img_array, img_list))
     #addImages.place(x=320, y=5)
 
-    output_location = Listbox(output_frame, height = 1, width = 40, bg = GREY_DARK, activestyle = 'dotbox', font = "Helvetica", fg = GREY_LIGHT)
-    output_location.place(x=15, y=40)
+    #conpact
+    #output_location = Listbox(output_frame, height = 1, width = 40, bg = GREY_DARK, activestyle = 'dotbox', font = "Helvetica", fg = GREY_LIGHT)
+    #output_location.place(x=15, y=40)
     
-    clearImages = tk.Button(output_frame, text="Set Output Location", padx=15, pady=2, fg="white", bg=BUTTON_COL, command= lambda: setOutputLocation(output_location))
-    clearImages.place(x=310, y=5)
+    #clearImages = tk.Button(output_frame, text="Set Output Location", padx=15, pady=2, fg="white", bg=BUTTON_COL, command= lambda: setOutputLocation(out_loc, output_location))
+    #clearImages.place(x=310, y=5)
 
-    info_lbl = tk.Label(output_info_frame, text="INFO", bg=GREY_LIGHT, fg=TEXT_COL, font=(TEXT_FONT,11))
-    info_lbl.place(x=15, y=5)
-    prefix_lbl = tk.Label(output_info_frame, text="Output Folder:", bg=GREY_LIGHT, fg=TEXT_COL, font=(TEXT_FONT,9))
-    prefix_lbl.place(x=70, y=7)
-    out_folder_entry = tk.Entry(output_info_frame, width=12)
-    out_folder_entry.place(x=150, y=7)
-    clearImages = tk.Button(output_info_frame, text="PROCESS", padx=15, pady=2, fg="white", bg=BUTTON_COL, command= lambda: extractData(out_folder_entry))
-    clearImages.place(x=370, y=6)
+
+    folder_name = tk.Entry(output_info_frame, width=12)
+    folder_name.place(x=280, y=10)
+    output_list = makeListbox(output_info_frame, 1, 40)
+    output_list.place(x=15, y=40)
+    makeOutputFrame(output_info_frame, "OUTPUT", out_loc, output_list, folder_name, extractData)
+    
+    
+    #info_lbl = tk.Label(output_info_frame, text="INFO", bg=GREY_LIGHT, fg=TEXT_COL, font=(TEXT_FONT,11))
+    #info_lbl.place(x=15, y=5)
+    #prefix_lbl = tk.Label(output_info_frame, text="Output Folder:", bg=GREY_LIGHT, fg=TEXT_COL, font=(TEXT_FONT,9))
+    #prefix_lbl.place(x=70, y=7)
+    #out_folder_entry = tk.Entry(output_info_frame, width=12)
+    #out_folder_entry.place(x=150, y=7)
+    #clearImages = tk.Button(output_info_frame, text="PROCESS", padx=15, pady=2, fg="white", bg=BUTTON_COL, command= lambda: extractData(out_folder_entry))
+    #clearImages.place(x=370, y=6)
 
 
 if __name__ == "__main__":
