@@ -23,7 +23,9 @@ hosts       = []
 
 #output
 containers  = []
-out_loc = ""
+
+output_loc = ""
+
 
 def loadImages(img_array, image_list):
     selections = getSelection()    
@@ -40,11 +42,11 @@ def loadFolderSystem(img_array, image_list):
     setListBox(image_list, ["Folder System: " + folderSystem])
 
 
-def setOutputLocation(out_location, image_list):
-    location = getDirectory()
-    out_location = location
+def setOutputLocation(image_list):
+    global output_loc
+    output_loc = getDirectory()
     image_list.delete(0,'end')
-    setListBox(image_list, [location])
+    setListBox(image_list, [output_loc])
 
     
 def setArrayItems(img_array, items):
@@ -79,6 +81,10 @@ def getSubDirItems(start_location):
     return all_images
 
 
+def makeDirectory(full_dir):
+    if os.path.exists(full_dir) is False:
+         os.makedirs(full_dir)
+
 def getFileNames(dirs):
     base_names = []
     for file in dirs:
@@ -96,19 +102,34 @@ def clearInput(img_array, image_list):
     image_list.delete(0, 'end')
 
 
-def extractData(out_folder_entry):
+def extractData(out_folder):
     print("extract images")
-    #add check that output location is given and selections are images
+    #add check that output location is given and selections are images, only allow jpg, png, jpeg in window?? or ignore ones not ending in such
     
-    out_location = out_loc + "/" + out_folder_entry.get()
-    try:
-        os.mkdir(out_location)
-    except:
-        pass
+    out_loc = output_loc + "/" + out_folder.get()#############make these sections into functions
+
+    makeDirectory(out_loc)
+   # try:
+   #     os.mkdir(out_loc)
+   # except:
+   #     pass
+
     for container in containers:
         #use PNG for lossless
         container_name_segs = os.path.basename(container).split(".")[0].split("-")
-        out_name = container_name_segs[2] + ".png"
+
+        out_name = ""
+        sub_folders = ""
+        if "#" in container_name_segs[1]:
+            out_name = container_name_segs[1].split("#")[-1]
+            sub_folders = container_name_segs[1].replace("#", "/").replace(out_name, "")[:-1]
+
+            makeDirectory(out_loc + sub_folders)
+            #if os.path.exists(out_loc + sub_folders) is False:
+            #    os.makedirs(out_loc + sub_folders)
+    
+        else:
+            out_name = container_name_segs[1]
         
         current_cont = cv2.imread(container)
         current_out = np.zeros(shape=(int(current_cont.shape[0]),int(current_cont.shape[1]//2),3))
@@ -129,46 +150,43 @@ def extractData(out_folder_entry):
                 current_out[pix_row][x_out][2] = b_pix
                 x_out += 1
             x_out = 0
-        cv2.imwrite(out_location + "/" + str(out_name), current_out)
+        cv2.imwrite(out_loc + sub_folders + "/" + str(out_name) + ".png", current_out)
 
 
-def packData(prefix_entry):    #need to save the subfolder locations to the file names 
+def packData(out_folder):    #need to save the subfolder locations to the file names 
     print("pack images")
 
-    prefix = prefix_entry.get()
+    #make output location #############make these sections into functions
+    out_loc = output_loc + "/" + out_folder.get()
+    try:
+        os.mkdir(out_loc)
+    except:
+        pass
 
     #extract all images from subfolders and all to payload array before main loop starts
     for index, img in enumerate(payload):
         if img.startswith("#FS"):
-            subItems = getSubDirItems(img)###make each entry have a custom prefix and identifyer for the sub folder system
+            subItems = getSubDirItems(img[3:])
             for item in subItems:
-                payload.append("#" + img + "#" + item)
+                payload.append("#" + img[3:] + "#" + item)
             del payload[index]
 
-    ###############################fin this implementation folder system
-    img_loc = ""
-    img_name = ""
-    for index, img in enumerate(payload):
-
-        if img.startswith("#"):
-            img = img.split("#")
-            
-            img_name = img[1].replace(img[0], '').replace("#", '').replace("/", '#')
-            img_loc = img[1]
-            
-            
-        out_location = os.path.dirname(img) + "/" + prefix
-        try:
-            os.mkdir(out_location)
-        except:
-            pass
-
-        data_name = os.path.basename(payload[index]).split(".")[0]
+    out_name = ""
+    
+    for index, img_loc in enumerate(payload):
         
+        if img_loc.startswith("#"):
+            img_loc = img_loc.split("#")
+            out_name = img_loc[2].removeprefix(img_loc[1]).replace("/", '#')[:-4]
+            img_loc = img_loc[2]
+
+        else:
+            out_name = os.path.basename(payload[index]).split(".")[0]
+            
         host_index = index % len(hosts)
         host_dir = hosts[host_index]
 
-        data = cv2.imread(img)
+        data = cv2.imread(img_loc)
         container = cv2.imread(host_dir)
 
         #make host 2x
@@ -176,15 +194,12 @@ def packData(prefix_entry):    #need to save the subfolder locations to the file
         container = cv2.resize(container, dsize=(int(data_w*2), int(data_h)), interpolation=cv2.INTER_CUBIC)
 
         x_pix = 0
-        
+            
         for pix_row in range(0, container.shape[0], 1):
             for pix_col in range(0, container.shape[1], 2):
 
-               # print(pix_row, pix_col, x_pix)
-               # print(container.shape)
-
                 data_pix = data[pix_row][x_pix]
-                
+                    
                 cont_pix_front = container[pix_row][pix_col]
                 cont_pix_back = container[pix_row][pix_col+1]
 
@@ -197,12 +212,11 @@ def packData(prefix_entry):    #need to save the subfolder locations to the file
                 g_front = int(g_front, 2)
                 g_back = "{0:08b}".format(cont_pix_back[1])[0:4] + "{0:08b}".format(data_pix[1])[4:8]
                 g_back = int(g_back, 2)
-                
+                    
                 r_front = "{0:08b}".format(cont_pix_front[2])[0:4] + "{0:08b}".format(data_pix[2])[0:4]
                 r_front = int(r_front, 2)
                 r_back = "{0:08b}".format(cont_pix_back[2])[0:4] + "{0:08b}".format(data_pix[2])[4:8]
                 r_back = int(r_back, 2)
-
 
                 container[pix_row][pix_col][0] = r_front
                 container[pix_row][pix_col+1][0] = r_back
@@ -213,9 +227,8 @@ def packData(prefix_entry):    #need to save the subfolder locations to the file
 
                 x_pix += 1
             x_pix = 0
-        
-        cv2.imwrite(out_location + "/" + str(index) + "-" + str(prefix) + "-" + str(data_name) + ".png", container)
-        
+            
+        cv2.imwrite(out_loc + "/" + str(index) + "-" + str(out_name) + ".png", container)
 
 
 def startMenu():
@@ -244,10 +257,10 @@ def makeImportFrame(frame, frame_title, img_array, img_list):
     clearImages.place(x=395, y=5)
 
 
-def makeOutputFrame(frame, frame_title, out_loc, img_list, folder_name, operation):
+def makeOutputFrame(frame, frame_title, img_list, folder_name, operation):
     info_lbl = tk.Label(frame, text=frame_title, bg=GREY_LIGHT, fg=TEXT_COL, font=(TEXT_FONT,11))
     info_lbl.place(x=15, y=5)
-    addDir = tk.Button(frame, text="Set Output Location", padx=5, pady=2, fg="white", bg=BUTTON_COL, command= lambda: setOutputLocation(out_loc, img_list))
+    addDir = tk.Button(frame, text="Set Output Location", padx=5, pady=2, fg="white", bg=BUTTON_COL, command= lambda: setOutputLocation(img_list))
     addDir.place(x=100, y=5)
     prefix_lbl = tk.Label(frame, text="Folder:", bg=GREY_LIGHT, fg=TEXT_COL, font=(TEXT_FONT,9))
     prefix_lbl.place(x=235, y=7)
@@ -286,7 +299,7 @@ def packInterface():
     folder_name.place(x=280, y=10)
     output_list = makeListbox(info_frame, 1, 40)
     output_list.place(x=15, y=40)
-    makeOutputFrame(info_frame, "OUTPUT", out_loc, output_list, folder_name, packData)
+    makeOutputFrame(info_frame, "OUTPUT", output_list, folder_name, packData)
 
 
 
@@ -329,7 +342,7 @@ def extractInterface():
     folder_name.place(x=280, y=10)
     output_list = makeListbox(output_info_frame, 1, 40)
     output_list.place(x=15, y=40)
-    makeOutputFrame(output_info_frame, "OUTPUT", out_loc, output_list, folder_name, extractData)
+    makeOutputFrame(output_info_frame, "OUTPUT", output_list, folder_name, extractData)
     
     
     #info_lbl = tk.Label(output_info_frame, text="INFO", bg=GREY_LIGHT, fg=TEXT_COL, font=(TEXT_FONT,11))
