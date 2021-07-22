@@ -9,12 +9,12 @@ APP_TITLE = "Steganography Packer"
 WINDOW_H = 500
 WINDOW_W = 500
 
-GREY_DARK   = "gray68"
-GREY_LIGHT  = "gray88"
+FIRST_COL   = "gray68"
+SECOND_COL  = "gray88"
 
 BUTTON_COL  = "gray55"
-
 TEXT_COL    = "gray40"
+
 TEXT_FONT   = "Helvatical bold"
 
 #input
@@ -106,13 +106,8 @@ def extractData(out_folder):
     print("extract images")
     #add check that output location is given and selections are images, only allow jpg, png, jpeg in window?? or ignore ones not ending in such
     
-    out_loc = output_loc + "/" + out_folder.get()#############make these sections into functions
-
+    out_loc = output_loc + "/" + out_folder.get()
     makeDirectory(out_loc)
-   # try:
-   #     os.mkdir(out_loc)
-   # except:
-   #     pass
 
     for container in containers:
         #use PNG for lossless
@@ -123,10 +118,7 @@ def extractData(out_folder):
         if "#" in container_name_segs[1]:
             out_name = container_name_segs[1].split("#")[-1]
             sub_folders = container_name_segs[1].replace("#", "/").replace(out_name, "")[:-1]
-
             makeDirectory(out_loc + sub_folders)
-            #if os.path.exists(out_loc + sub_folders) is False:
-            #    os.makedirs(out_loc + sub_folders)
     
         else:
             out_name = container_name_segs[1]
@@ -153,15 +145,12 @@ def extractData(out_folder):
         cv2.imwrite(out_loc + sub_folders + "/" + str(out_name) + ".png", current_out)
 
 
-def packData(out_folder):    #need to save the subfolder locations to the file names 
+def packData(out_folder):
     print("pack images")
 
-    #make output location #############make these sections into functions
+    #make output location
     out_loc = output_loc + "/" + out_folder.get()
-    try:
-        os.mkdir(out_loc)
-    except:
-        pass
+    makeDirectory(out_loc)
 
     #extract all images from subfolders and all to payload array before main loop starts
     for index, img in enumerate(payload):
@@ -232,11 +221,11 @@ def packData(out_folder):    #need to save the subfolder locations to the file n
 
 
 def startMenu():
-    menu_frame = tk.Frame(root, bg=GREY_LIGHT)
+    menu_frame = tk.Frame(root, bg=SECOND_COL)
     menu_frame.place(relwidth=1, relheight=0.07, relx=0, rely=0)
-    create_lbl = tk.Label(menu_frame, text="OPERATION:", bg=GREY_LIGHT, fg=TEXT_COL, font=(TEXT_FONT,11))
+    create_lbl = tk.Label(menu_frame, text="OPERATION:", bg=SECOND_COL, fg=TEXT_COL, font=(TEXT_FONT,11))
     create_lbl.place(x=15, y=7)
-    create_lbl = tk.Label(menu_frame, text="or", bg=GREY_LIGHT, fg=TEXT_COL, font=(TEXT_FONT,11))
+    create_lbl = tk.Label(menu_frame, text="or", bg=SECOND_COL, fg=TEXT_COL, font=(TEXT_FONT,11))
     create_lbl.place(x=260, y=7)
     packImages = tk.Button(menu_frame, text="Pack Data", padx=25, pady=2, fg="white", bg=BUTTON_COL, command= lambda: packInterface())
     packImages.place(x=130, y=5)
@@ -247,7 +236,7 @@ def startMenu():
 
 
 def makeImportFrame(frame, frame_title, img_array, img_list):
-    create_lbl = tk.Label(frame, text=frame_title, bg=GREY_LIGHT, fg=TEXT_COL, font=(TEXT_FONT,11))
+    create_lbl = tk.Label(frame, text=frame_title, bg=SECOND_COL, fg=TEXT_COL, font=(TEXT_FONT,11))
     create_lbl.place(x=15, y=10)
     addDir = tk.Button(frame, text="Import Folder System", padx=5, pady=2, fg="white", bg=BUTTON_COL, command= lambda: loadFolderSystem(img_array, img_list))
     addDir.place(x=140, y=5)
@@ -258,18 +247,18 @@ def makeImportFrame(frame, frame_title, img_array, img_list):
 
 
 def makeOutputFrame(frame, frame_title, img_list, folder_name, operation):
-    info_lbl = tk.Label(frame, text=frame_title, bg=GREY_LIGHT, fg=TEXT_COL, font=(TEXT_FONT,11))
+    info_lbl = tk.Label(frame, text=frame_title, bg=SECOND_COL, fg=TEXT_COL, font=(TEXT_FONT,11))
     info_lbl.place(x=15, y=5)
     addDir = tk.Button(frame, text="Set Output Location", padx=5, pady=2, fg="white", bg=BUTTON_COL, command= lambda: setOutputLocation(img_list))
     addDir.place(x=100, y=5)
-    prefix_lbl = tk.Label(frame, text="Folder:", bg=GREY_LIGHT, fg=TEXT_COL, font=(TEXT_FONT,9))
+    prefix_lbl = tk.Label(frame, text="Folder:", bg=SECOND_COL, fg=TEXT_COL, font=(TEXT_FONT,9))
     prefix_lbl.place(x=235, y=7)
     clearImages = tk.Button(frame, text="PROCESS", padx=10, pady=2, fg="white", bg=BUTTON_COL, command= lambda: operation(folder_name))
     clearImages.place(x=380, y=6)
 
 
 def makeListbox(frame, h, w):
-    return Listbox(frame, height=h, width=w, bg=GREY_DARK, activestyle='dotbox', font="Helvetica", fg=GREY_LIGHT)
+    return Listbox(frame, height=h, width=w, bg=FIRST_COL, activestyle='dotbox', font="Helvetica", fg=SECOND_COL)
 
 
 def packInterface():
@@ -280,11 +269,11 @@ def packInterface():
     except:
         pass
     
-    data_frame = tk.Frame(root, bg=GREY_LIGHT)
+    data_frame = tk.Frame(root, bg=SECOND_COL)
     data_frame.place(relwidth=0.95, relheight=0.355, relx=0.025, rely=0.085)
-    host_frame = tk.Frame(root, bg=GREY_LIGHT)
+    host_frame = tk.Frame(root, bg=SECOND_COL)
     host_frame.place(relwidth=0.95, relheight=0.355, relx=0.025, rely=0.46)
-    info_frame = tk.Frame(root, bg=GREY_LIGHT)
+    info_frame = tk.Frame(root, bg=SECOND_COL)
     info_frame.place(relwidth=0.95, relheight=0.138, relx=0.025, rely=0.84)
 
     payload_list = makeListbox(data_frame, 5, 40)
@@ -302,8 +291,6 @@ def packInterface():
     makeOutputFrame(info_frame, "OUTPUT", output_list, folder_name, packData)
 
 
-
-
 def extractInterface():
     global container_frame, output_info_frame
     try:
@@ -313,11 +300,11 @@ def extractInterface():
     except:
         pass
     
-    container_frame = tk.Frame(root, bg=GREY_LIGHT)
+    container_frame = tk.Frame(root, bg=SECOND_COL)
     container_frame.place(relwidth=0.95, relheight=0.355, relx=0.025, rely=0.085)
-    output_frame = tk.Frame(root, bg=GREY_LIGHT)
+    output_frame = tk.Frame(root, bg=SECOND_COL)
     output_frame.place(relwidth=0.95, relheight=0.355, relx=0.025, rely=0.46)
-    output_info_frame = tk.Frame(root, bg=GREY_LIGHT)
+    output_info_frame = tk.Frame(root, bg=SECOND_COL)
     output_info_frame.place(relwidth=0.95, relheight=0.138, relx=0.025, rely=0.84)
 
     container_list = makeListbox(container_frame, 5, 40)
@@ -325,40 +312,17 @@ def extractInterface():
 
     makeImportFrame(container_frame, "CONTAINERS", containers, container_list)
 
-    #create_lbl = tk.Label(output_frame, text="OUTPUT OPTIONS", bg=GREY_LIGHT, fg=TEXT_COL, font=(TEXT_FONT,11))
-    #create_lbl.place(x=15, y=10)
-    #addImages = tk.Button(output_frame, text="Import", padx=10, pady=2, fg="white", bg=BUTTON_COL, command= lambda: loadImages(img_array, img_list))
-    #addImages.place(x=320, y=5)
-
-    #conpact
-    #output_location = Listbox(output_frame, height = 1, width = 40, bg = GREY_DARK, activestyle = 'dotbox', font = "Helvetica", fg = GREY_LIGHT)
-    #output_location.place(x=15, y=40)
-    
-    #clearImages = tk.Button(output_frame, text="Set Output Location", padx=15, pady=2, fg="white", bg=BUTTON_COL, command= lambda: setOutputLocation(out_loc, output_location))
-    #clearImages.place(x=310, y=5)
-
-
     folder_name = tk.Entry(output_info_frame, width=12)
     folder_name.place(x=280, y=10)
     output_list = makeListbox(output_info_frame, 1, 40)
     output_list.place(x=15, y=40)
     makeOutputFrame(output_info_frame, "OUTPUT", output_list, folder_name, extractData)
-    
-    
-    #info_lbl = tk.Label(output_info_frame, text="INFO", bg=GREY_LIGHT, fg=TEXT_COL, font=(TEXT_FONT,11))
-    #info_lbl.place(x=15, y=5)
-    #prefix_lbl = tk.Label(output_info_frame, text="Output Folder:", bg=GREY_LIGHT, fg=TEXT_COL, font=(TEXT_FONT,9))
-    #prefix_lbl.place(x=70, y=7)
-    #out_folder_entry = tk.Entry(output_info_frame, width=12)
-    #out_folder_entry.place(x=150, y=7)
-    #clearImages = tk.Button(output_info_frame, text="PROCESS", padx=15, pady=2, fg="white", bg=BUTTON_COL, command= lambda: extractData(out_folder_entry))
-    #clearImages.place(x=370, y=6)
 
 
 if __name__ == "__main__":
     root = tk.Tk()
     root.resizable(width=False, height=False)
     root.title(APP_TITLE)
-    canvas = tk.Canvas(root, height=WINDOW_H, width=WINDOW_W, bg=GREY_DARK).pack()
+    canvas = tk.Canvas(root, height=WINDOW_H, width=WINDOW_W, bg=FIRST_COL).pack()
     startMenu()
 
