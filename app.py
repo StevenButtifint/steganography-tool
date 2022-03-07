@@ -321,8 +321,5 @@ def extractInterface():
 
 if __name__ == "__main__":
     root = tk.Tk()
-    root.resizable(width=False, height=False)
-    root.title(APP_TITLE)
-    canvas = tk.Canvas(root, height=WINDOW_H, width=WINDOW_W, bg=FIRST_COL).pack()
-    startMenu()
+    Application(root)
 
