@@ -5,26 +5,12 @@ import os
 import cv2
 from PIL import Image
 
-APP_TITLE = "Steganography Packer"
-WINDOW_H = 500
-WINDOW_W = 500
 
-FIRST_COL   = "gray68"
-SECOND_COL  = "gray88"
 
-BUTTON_COL  = "gray55"
-TEXT_COL    = "gray40"
 
-TEXT_FONT   = "Helvatical bold"
 
-#input
-payload     = []
-hosts       = []
 
-#output
-containers  = []
 
-output_loc = ""
 
 
 def loadImages(img_array, image_list):
