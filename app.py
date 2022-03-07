@@ -1,9 +1,9 @@
+import numpy as np
 import tkinter as tk
-from tkinter import filedialog, Text, Listbox, filedialog, Entry
+import tkinter.filedialog
 import os
 import cv2
 from PIL import Image
-import numpy as np
 
 APP_TITLE = "Steganography Packer"
 WINDOW_H = 500
