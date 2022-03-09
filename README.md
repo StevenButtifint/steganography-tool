@@ -16,7 +16,7 @@
 
 ### Description
 
-Image steganography tool with GUI. Pack and extract images to and from other images. Written in Python using the Tkinter GUI toolkit. 
+LSB image steganography tool with GUI. Pack and extract images to and from other images. Written in Python using the Tkinter GUI toolkit. 
 
 ---
 
@@ -38,7 +38,8 @@ Image steganography tool with GUI. Pack and extract images to and from other ima
 
 ### What I Learned
 
-- Creating modular GUI design to allow for dynamic use of Tkinter frames.
+- Creating modular GUI design to allow for dynamic use of Tkinter objects.
 - How to update Tkinter frame contents and provide application navigation.
+- How to manually implement LSB image steganography.
 
 [Back To The Top](#steganography-tool)
