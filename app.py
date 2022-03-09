@@ -4,6 +4,7 @@ import tkinter.filedialog
 import os
 import cv2
 from PIL import Image
+from constants import *
 
 
 
