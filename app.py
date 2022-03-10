@@ -7,6 +7,14 @@ from PIL import Image
 from constants import *
 
 
+class Application:
+    def __init__(self, master):
+        self.window = master
+        master.title("Steganography Tool")
+        master.geometry("500x500")
+        master.resizable(width=False, height=False)
+        
+        tk.Canvas(self.window, height=500, width=500, bg=COLOUR_DARK).pack()
 
 
 
