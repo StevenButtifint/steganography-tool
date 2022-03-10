@@ -15,6 +15,11 @@ class Application:
         master.resizable(width=False, height=False)
         
         tk.Canvas(self.window, height=500, width=500, bg=COLOUR_DARK).pack()
+        self.payload = []
+        self.hosts = []
+        self.containers = []
+        self.out_location = ""
+        self.displayOperations()
 
 
 
