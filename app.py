@@ -26,6 +26,10 @@ class Application:
 
 
 
+    @staticmethod
+    def _placeLabel(frame, text, bg, fg, font, x, y):
+        label = tk.Label(frame, text=text, bg=bg, fg=fg, font=font)
+        label.place(x=x, y=y)
 
 def loadImages(img_array, image_list):
     selections = getSelection()    
