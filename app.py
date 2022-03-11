@@ -37,6 +37,10 @@ def loadImages(img_array, image_list):
     file_list = getFileNames(img_array)
     setListBox(image_list, file_list)
 
+    @staticmethod
+    def _placeButton(frame, text, padx, pady, fg, bg, fun, x, y):
+        button = tk.Button(frame, text=text, padx=padx, pady=pady, fg=fg, bg=bg, command= lambda: fun())
+        button.place(x=x, y=y)
 
 def loadFolderSystem(img_array, image_list):
     print("load Folder System")
