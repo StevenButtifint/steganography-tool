@@ -24,6 +24,11 @@ class Application:
 
 
 
+    @staticmethod
+    def _placeFrame(parent, bg, rw, rh, rx, ry):
+        frame = tk.Frame(parent, bg=bg)
+        frame.place(relwidth=rw, relheight=rh, relx=rx, rely=ry)
+        return frame
 
 
     @staticmethod
