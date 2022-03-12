@@ -43,11 +43,6 @@ class Application:
         label = tk.Label(frame, text=text, bg=bg, fg=fg, font=font)
         label.place(x=x, y=y)
 
-def loadImages(img_array, image_list):
-    selections = getSelection()    
-    setArrayItems(img_array, selections)
-    file_list = getFileNames(img_array)
-    setListBox(image_list, file_list)
 
     @staticmethod
     def _placeButton(frame, text, padx, pady, fg, bg, fun, x, y):
