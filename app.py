@@ -110,6 +110,11 @@ def getFileNames(dirs):
 def setListBox(list_box, image_list):
     for i, img in enumerate(image_list):
         list_box.insert(i, img)
+    def _loadImages(self, img_array, image_list):
+        selections = self._getSelection()
+        img_array.extend(selections)
+        file_list = self._getFileNames(img_array)
+        self._setListBox(image_list, file_list)
 
 
 def clearInput(img_array, image_list):
