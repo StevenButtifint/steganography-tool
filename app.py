@@ -231,23 +231,6 @@ def packData(out_folder):
             x_pix = 0
             
         cv2.imwrite(out_loc + "/" + str(index) + "-" + str(out_name) + ".png", container)
-
-
-def startMenu():
-    menu_frame = tk.Frame(root, bg=SECOND_COL)
-    menu_frame.place(relwidth=1, relheight=0.07, relx=0, rely=0)
-    create_lbl = tk.Label(menu_frame, text="OPERATION:", bg=SECOND_COL, fg=TEXT_COL, font=(TEXT_FONT,11))
-    create_lbl.place(x=15, y=7)
-    create_lbl = tk.Label(menu_frame, text="or", bg=SECOND_COL, fg=TEXT_COL, font=(TEXT_FONT,11))
-    create_lbl.place(x=260, y=7)
-    packImages = tk.Button(menu_frame, text="Pack Data", padx=25, pady=2, fg="white", bg=BUTTON_COL, command= lambda: packInterface())
-    packImages.place(x=130, y=5)
-    openImages = tk.Button(menu_frame, text="Extract Data", padx=25, pady=2, fg="white", bg=BUTTON_COL, command= lambda: extractInterface())
-    openImages.place(x=300, y=5)
-    closeBtn = tk.Button(menu_frame, text="Quit", padx=2, pady=2, fg="white", bg=BUTTON_COL, command= lambda: quit())
-    closeBtn.place(x=460, y=5)
-
-
 def makeImportFrame(frame, frame_title, img_array, img_list):
     create_lbl = tk.Label(frame, text=frame_title, bg=SECOND_COL, fg=TEXT_COL, font=(TEXT_FONT,11))
     create_lbl.place(x=15, y=10)
