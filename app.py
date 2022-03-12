@@ -22,6 +22,13 @@ class Application:
         self.displayOperations()
 
 
+    def displayOperations(self):
+        operations_frame = self._placeFrame(root, COLOUR_LIGHT, 1, 0.07, 0, 0)        
+        self._placeLabel(operations_frame, "OPERATION:", COLOUR_LIGHT, COLOUR_TEXT, (TEXT_FONT,11), 15, 7)
+        self._placeLabel(operations_frame, "or", COLOUR_LIGHT, COLOUR_TEXT, (TEXT_FONT,11), 260, 7)
+        self._placeButton(operations_frame, "Pack Data", 25, 2, COLOUR_BUTTON_TEXT, COLOUR_BUTTON, lambda: self._packInterface(), 130, 5)
+        self._placeButton(operations_frame, "Extract Data", 25, 2, COLOUR_BUTTON_TEXT, COLOUR_BUTTON, lambda: self._extractInterface(), 300, 5)
+        self._placeButton(operations_frame, "Quit", 2, 2, COLOUR_BUTTON_TEXT, COLOUR_BUTTON, quit, 460, 5)
 
 
     @staticmethod
