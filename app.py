@@ -49,14 +49,6 @@ class Application:
         button = tk.Button(frame, text=text, padx=padx, pady=pady, fg=fg, bg=bg, command= lambda: fun())
         button.place(x=x, y=y)
 
-def loadFolderSystem(img_array, image_list):
-    print("load Folder System")
-    folderSystem = getDirectory()
-    list_tag = os.path.basename(folderSystem)
-    img_array.append("#FS" + folderSystem)
-    setListBox(image_list, ["Folder System: " + folderSystem])
-
-
 def setOutputLocation(image_list):
     global output_loc
     output_loc = getDirectory()
@@ -120,6 +112,13 @@ def setListBox(list_box, image_list):
 def clearInput(img_array, image_list):
     img_array.clear()
     image_list.delete(0, 'end')
+    def _importFolderSystem(self, img_array, image_list):
+        folderSystem = self._getDirectory()
+        if folderSystem != "":
+            list_tag = os.path.basename(folderSystem)
+            img_array.append("#FS" + folderSystem)
+            print("FS" + folderSystem)
+            self._setListBox(image_list, ["Folder System: " + folderSystem])
 
 
 def extractData(out_folder):
