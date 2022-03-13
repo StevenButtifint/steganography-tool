@@ -87,6 +87,11 @@ def getSubDirItems(start_location):
         del uncharted_subdirs[0]
     return all_images
 
+    @staticmethod
+    def _placeEntry(frame, width, x, y):
+        entry = tk.Entry(frame, width=width)
+        entry.place(x=x, y=y)
+        return entry
 
 def makeDirectory(full_dir):
     if os.path.exists(full_dir) is False:
