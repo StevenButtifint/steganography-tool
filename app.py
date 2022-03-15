@@ -90,6 +90,11 @@ def getFileNames(dirs):
     for file in dirs:
         base_names.append(os.path.basename(file))
     return base_names
+    @staticmethod
+    def _placeListbox(frame, h, w, x, y):
+        listbox = tk.Listbox(frame, height=h, width=w, bg=COLOUR_DARK, activestyle='dotbox', font="Helvetica", fg=COLOUR_LIGHT)
+        listbox.place(x=x, y=y)
+        return listbox
 
 
 def setListBox(list_box, image_list):
