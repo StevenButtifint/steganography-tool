@@ -49,11 +49,6 @@ class Application:
         button = tk.Button(frame, text=text, padx=padx, pady=pady, fg=fg, bg=bg, command= lambda: fun())
         button.place(x=x, y=y)
 
-def setArrayItems(img_array, items):
-    for item in items:
-        img_array.append(item)
-
-
 def getSelection():
     return filedialog.askopenfilenames(parent=root, title='Select Images')
 
