@@ -49,13 +49,6 @@ class Application:
         button = tk.Button(frame, text=text, padx=padx, pady=pady, fg=fg, bg=bg, command= lambda: fun())
         button.place(x=x, y=y)
 
-def setOutputLocation(image_list):
-    global output_loc
-    output_loc = getDirectory()
-    image_list.delete(0,'end')
-    setListBox(image_list, [output_loc])
-
-    
 def setArrayItems(img_array, items):
     for item in items:
         img_array.append(item)
