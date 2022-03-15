@@ -132,6 +132,10 @@ def extractData(out_folder):
     
     out_loc = output_loc + "/" + out_folder.get()
     makeDirectory(out_loc)
+    def _setOutputLocation(self, image_list):
+        self.output_location = self._getDirectory()
+        image_list.delete(0,'end')
+        self._setListBox(image_list, [self.output_location])
 
     for container in containers:
         #use PNG for lossless
