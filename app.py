@@ -157,6 +157,9 @@ def extractData(out_folder):
                 x_out += 1
             x_out = 0
         cv2.imwrite(out_loc + sub_folders + "/" + str(out_name) + ".png", current_out)
+    @staticmethod
+    def _getSelection():
+        return tk.filedialog.askopenfilenames(parent=root, title='Select Images')
 
 
 def packData(out_folder):
