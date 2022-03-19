@@ -164,6 +164,11 @@ def extractData(out_folder):
 
 def packData(out_folder):
     print("pack images")
+    @staticmethod
+    def _getDirectory():
+        return tk.filedialog.askdirectory(parent=root, title='Select Folder Location')
+
+
 
     #make output location
     out_loc = output_loc + "/" + out_folder.get()
