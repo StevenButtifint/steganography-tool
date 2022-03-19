@@ -49,23 +49,6 @@ class Application:
         button = tk.Button(frame, text=text, padx=padx, pady=pady, fg=fg, bg=bg, command= lambda: fun())
         button.place(x=x, y=y)
 
-def getSubDirItems(start_location):
-    all_images = []
-    uncharted_subdirs = []
-    uncharted_subdirs.append(start_location)
-    
-    #while there is still some folders to check
-    while len(uncharted_subdirs) > 0:
-        current_location = uncharted_subdirs[0]
-        location_items = os.listdir(current_location)
-        for item in location_items:
-            if "." in item:
-                if item.lower().endswith(('png', 'jpg', 'jpeg')):
-                    all_images.append(current_location + "/" + item)
-            else:
-                uncharted_subdirs.append(current_location + "/" + item)
-        del uncharted_subdirs[0]
-    return all_images
 
     @staticmethod
     def _placeEntry(frame, width, x, y):
