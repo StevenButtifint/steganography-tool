@@ -49,10 +49,6 @@ class Application:
         button = tk.Button(frame, text=text, padx=padx, pady=pady, fg=fg, bg=bg, command= lambda: fun())
         button.place(x=x, y=y)
 
-def getDirectory():
-    return filedialog.askdirectory(parent=root, title='Select Folder Location')
-
-
 def getSubDirItems(start_location):
     all_images = []
     uncharted_subdirs = []
