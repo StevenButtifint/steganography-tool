@@ -56,10 +56,6 @@ class Application:
         entry.place(x=x, y=y)
         return entry
 
-def makeDirectory(full_dir):
-    if os.path.exists(full_dir) is False:
-         os.makedirs(full_dir)
-
 def getFileNames(dirs):
     base_names = []
     for file in dirs:
