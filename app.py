@@ -71,9 +71,6 @@ class Application:
         self._setListBox(image_list, file_list)
 
 
-def clearInput(img_array, image_list):
-    img_array.clear()
-    image_list.delete(0, 'end')
     def _importFolderSystem(self, img_array, image_list):
         folderSystem = self._getDirectory()
         if folderSystem != "":
