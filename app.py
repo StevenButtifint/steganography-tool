@@ -56,11 +56,7 @@ class Application:
         entry.place(x=x, y=y)
         return entry
 
-def getFileNames(dirs):
-    base_names = []
-    for file in dirs:
-        base_names.append(os.path.basename(file))
-    return base_names
+
     @staticmethod
     def _placeListbox(frame, h, w, x, y):
         listbox = tk.Listbox(frame, height=h, width=w, bg=COLOUR_DARK, activestyle='dotbox', font="Helvetica", fg=COLOUR_LIGHT)
