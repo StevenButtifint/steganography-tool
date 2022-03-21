@@ -80,51 +80,12 @@ class Application:
             self._setListBox(image_list, ["Folder System: " + folderSystem])
 
 
-def extractData(out_folder):
-    print("extract images")
-    #add check that output location is given and selections are images, only allow jpg, png, jpeg in window?? or ignore ones not ending in such
-    
-    out_loc = output_loc + "/" + out_folder.get()
-    makeDirectory(out_loc)
     def _setOutputLocation(self, image_list):
         self.output_location = self._getDirectory()
         image_list.delete(0,'end')
         self._setListBox(image_list, [self.output_location])
 
-    for container in containers:
-        #use PNG for lossless
-        container_name_segs = os.path.basename(container).split(".")[0].split("-")
 
-        out_name = ""
-        sub_folders = ""
-        if "#" in container_name_segs[1]:
-            out_name = container_name_segs[1].split("#")[-1]
-            sub_folders = container_name_segs[1].replace("#", "/").replace(out_name, "")[:-1]
-            makeDirectory(out_loc + sub_folders)
-    
-        else:
-            out_name = container_name_segs[1]
-        
-        current_cont = cv2.imread(container)
-        current_out = np.zeros(shape=(int(current_cont.shape[0]),int(current_cont.shape[1]//2),3))
-
-        x_out = 0
-        for pix_row in range(0, current_cont.shape[0], 1):
-            for pix_col in range(0, current_cont.shape[1], 2):
-                cont_pix_front = current_cont[pix_row][pix_col]
-                cont_pix_back = current_cont[pix_row][pix_col+1]
-                b_pix = "{0:08b}".format(cont_pix_front[0])[4:8] + "{0:08b}".format(cont_pix_back[0])[4:8]
-                b_pix = int(b_pix, 2)
-                g_pix = "{0:08b}".format(cont_pix_front[1])[4:8] + "{0:08b}".format(cont_pix_back[1])[4:8]
-                g_pix = int(g_pix, 2)
-                r_pix = "{0:08b}".format(cont_pix_front[2])[4:8] + "{0:08b}".format(cont_pix_back[2])[4:8]
-                r_pix = int(r_pix, 2)
-                current_out[pix_row][x_out][0] = r_pix
-                current_out[pix_row][x_out][1] = g_pix
-                current_out[pix_row][x_out][2] = b_pix
-                x_out += 1
-            x_out = 0
-        cv2.imwrite(out_loc + sub_folders + "/" + str(out_name) + ".png", current_out)
     @staticmethod
     def _getSelection():
         return tk.filedialog.askopenfilenames(parent=root, title='Select Images')
