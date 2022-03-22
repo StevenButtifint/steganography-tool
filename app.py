@@ -98,6 +98,23 @@ def packData(out_folder):
         return tk.filedialog.askdirectory(parent=root, title='Select Folder Location')
 
 
+    @staticmethod
+    def _getSubDirItems(start_location):
+        all_images = []
+        uncharted_subdirs = []
+        uncharted_subdirs.append(start_location)
+        #while there is still some folders to check
+        while len(uncharted_subdirs) > 0:
+            current_location = uncharted_subdirs[0]
+            location_items = os.listdir(current_location)
+            for item in location_items:
+                if "." in item:
+                    if item.lower().endswith(('png', 'jpg', 'jpeg')):
+                        all_images.append(current_location + "/" + item)
+                else:
+                    uncharted_subdirs.append(current_location + "/" + item)
+            del uncharted_subdirs[0]
+        return all_images
 
     #make output location
     out_loc = output_loc + "/" + out_folder.get()
