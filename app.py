@@ -115,6 +115,12 @@ class Application:
         return all_images
 
 
+    @staticmethod
+    def _makeDirectory(full_dir):
+        if os.path.exists(full_dir) is False:
+             os.makedirs(full_dir)
+
+
 
 
 
