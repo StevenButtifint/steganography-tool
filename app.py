@@ -91,8 +91,6 @@ class Application:
         return tk.filedialog.askopenfilenames(parent=root, title='Select Images')
 
 
-def packData(out_folder):
-    print("pack images")
     @staticmethod
     def _getDirectory():
         return tk.filedialog.askdirectory(parent=root, title='Select Folder Location')
@@ -116,41 +114,10 @@ def packData(out_folder):
             del uncharted_subdirs[0]
         return all_images
 
-    #make output location
-    out_loc = output_loc + "/" + out_folder.get()
-    makeDirectory(out_loc)
 
-    #extract all images from subfolders and all to payload array before main loop starts
-    for index, img in enumerate(payload):
-        if img.startswith("#FS"):
-            subItems = getSubDirItems(img[3:])
-            for item in subItems:
-                payload.append("#" + img[3:] + "#" + item)
-            del payload[index]
 
-    out_name = ""
-    
-    for index, img_loc in enumerate(payload):
-        
-        if img_loc.startswith("#"):
-            img_loc = img_loc.split("#")
-            out_name = img_loc[2].removeprefix(img_loc[1]).replace("/", '#')[:-4]
-            img_loc = img_loc[2]
 
-        else:
-            out_name = os.path.basename(payload[index]).split(".")[0]
-            
-        host_index = index % len(hosts)
-        host_dir = hosts[host_index]
 
-        data = cv2.imread(img_loc)
-        container = cv2.imread(host_dir)
-
-        #make host 2x
-        data_h, data_w, _ = data.shape
-        container = cv2.resize(container, dsize=(int(data_w*2), int(data_h)), interpolation=cv2.INTER_CUBIC)
-
-        x_pix = 0
             
         for pix_row in range(0, container.shape[0], 1):
             for pix_col in range(0, container.shape[1], 2):
