@@ -121,6 +121,14 @@ class Application:
              os.makedirs(full_dir)
 
 
+    @staticmethod
+    def _getFileNames(dirs):
+        base_names = []
+        for file in dirs:
+            base_names.append(os.path.basename(file))
+        return base_names
+
+
 
 
 
