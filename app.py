@@ -136,6 +136,10 @@ class Application:
             list_box.insert(i, img)
 
 
+    @staticmethod
+    def _clearInput(img_array, image_list):
+        img_array.clear()
+        image_list.delete(0, 'end')
 
 
             
