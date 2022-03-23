@@ -142,6 +142,26 @@ class Application:
         image_list.delete(0, 'end')
 
 
+    def _extractData(self, out_folder):
+        print("extract images")
+        #add check that output location is given and selections are images, only allow jpg, png, jpeg in window?? or ignore ones not ending in such
+        
+        out_loc = self.output_location + "/" + out_folder.get()
+        self._makeDirectory(out_loc)
+
+        for container in self.containers:
+            #use PNG for lossless
+            container_name_segs = os.path.basename(container).split(".")[0].split("-")
+
+            out_name = ""
+            sub_folders = ""
+            if "#" in container_name_segs[1]:
+                out_name = container_name_segs[1].split("#")[-1]
+                sub_folders = container_name_segs[1].replace("#", "/").replace(out_name, "")[:-1]
+                self._makeDirectory(out_loc + sub_folders)
+        
+            else:
+                out_name = container_name_segs[1]
             
         for pix_row in range(0, container.shape[0], 1):
             for pix_col in range(0, container.shape[1], 2):
