@@ -163,38 +163,28 @@ class Application:
             else:
                 out_name = container_name_segs[1]
             
-        for pix_row in range(0, container.shape[0], 1):
-            for pix_col in range(0, container.shape[1], 2):
+            current_cont = cv2.imread(container)
+            current_out = np.zeros(shape=(int(current_cont.shape[0]),int(current_cont.shape[1]//2),3))
 
-                data_pix = data[pix_row][x_pix]
-                    
-                cont_pix_front = container[pix_row][pix_col]
-                cont_pix_back = container[pix_row][pix_col+1]
+            x_out = 0
+            for pix_row in range(0, current_cont.shape[0], 1):
+                for pix_col in range(0, current_cont.shape[1], 2):
+                    cont_pix_front = current_cont[pix_row][pix_col]
+                    cont_pix_back = current_cont[pix_row][pix_col+1]
+                    b_pix = "{0:08b}".format(cont_pix_front[0])[4:8] + "{0:08b}".format(cont_pix_back[0])[4:8]
+                    b_pix = int(b_pix, 2)
+                    g_pix = "{0:08b}".format(cont_pix_front[1])[4:8] + "{0:08b}".format(cont_pix_back[1])[4:8]
+                    g_pix = int(g_pix, 2)
+                    r_pix = "{0:08b}".format(cont_pix_front[2])[4:8] + "{0:08b}".format(cont_pix_back[2])[4:8]
+                    r_pix = int(r_pix, 2)
+                    current_out[pix_row][x_out][0] = r_pix
+                    current_out[pix_row][x_out][1] = g_pix
+                    current_out[pix_row][x_out][2] = b_pix
+                    x_out += 1
+                x_out = 0
+            cv2.imwrite(out_loc + sub_folders + "/" + str(out_name) + ".png", current_out)
 
-                b_front = "{0:08b}".format(cont_pix_front[0])[0:4] + "{0:08b}".format(data_pix[0])[0:4]
-                b_front = int(b_front, 2)
-                b_back = "{0:08b}".format(cont_pix_back[0])[0:4] + "{0:08b}".format(data_pix[0])[4:8]
-                b_back = int(b_back, 2)
 
-                g_front = "{0:08b}".format(cont_pix_front[1])[0:4] + "{0:08b}".format(data_pix[1])[0:4]
-                g_front = int(g_front, 2)
-                g_back = "{0:08b}".format(cont_pix_back[1])[0:4] + "{0:08b}".format(data_pix[1])[4:8]
-                g_back = int(g_back, 2)
-                    
-                r_front = "{0:08b}".format(cont_pix_front[2])[0:4] + "{0:08b}".format(data_pix[2])[0:4]
-                r_front = int(r_front, 2)
-                r_back = "{0:08b}".format(cont_pix_back[2])[0:4] + "{0:08b}".format(data_pix[2])[4:8]
-                r_back = int(r_back, 2)
-
-                container[pix_row][pix_col][0] = r_front
-                container[pix_row][pix_col+1][0] = r_back
-                container[pix_row][pix_col][1] = g_front
-                container[pix_row][pix_col+1][1] = g_back
-                container[pix_row][pix_col][2] = b_front
-                container[pix_row][pix_col+1][2] = b_back
-
-                x_pix += 1
-            x_pix = 0
             
         cv2.imwrite(out_loc + "/" + str(index) + "-" + str(out_name) + ".png", container)
 def makeImportFrame(frame, frame_title, img_array, img_list):
