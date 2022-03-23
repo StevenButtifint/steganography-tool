@@ -129,6 +129,12 @@ class Application:
         return base_names
 
 
+    @staticmethod
+    def _setListBox(list_box, image_list):
+        list_box.delete(0, 'end')
+        for i, img in enumerate(image_list):
+            list_box.insert(i, img)
+
 
 
 
