@@ -204,17 +204,6 @@ class Application:
         
         for index, img_loc in enumerate(self.payload):
             
-def makeImportFrame(frame, frame_title, img_array, img_list):
-    create_lbl = tk.Label(frame, text=frame_title, bg=SECOND_COL, fg=TEXT_COL, font=(TEXT_FONT,11))
-    create_lbl.place(x=15, y=10)
-    addDir = tk.Button(frame, text="Import Folder System", padx=5, pady=2, fg="white", bg=BUTTON_COL, command= lambda: loadFolderSystem(img_array, img_list))
-    addDir.place(x=140, y=5)
-    addImages = tk.Button(frame, text="Import Image", padx=5, pady=2, fg="white", bg=BUTTON_COL, command= lambda: loadImages(img_array, img_list))
-    addImages.place(x=280, y=5)
-    clearImages = tk.Button(frame, text="Clear", padx=15, pady=2, fg="white", bg=BUTTON_COL, command= lambda: clearInput(img_array, img_list))
-    clearImages.place(x=395, y=5)
-
-
 def makeOutputFrame(frame, frame_title, img_list, folder_name, operation):
     info_lbl = tk.Label(frame, text=frame_title, bg=SECOND_COL, fg=TEXT_COL, font=(TEXT_FONT,11))
     info_lbl.place(x=15, y=5)
