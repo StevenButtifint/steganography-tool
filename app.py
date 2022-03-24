@@ -185,8 +185,25 @@ class Application:
             cv2.imwrite(out_loc + sub_folders + "/" + str(out_name) + ".png", current_out)
 
 
+    def _packData(self, out_folder):
+        print("pack images")
+
+        #make output location
+        out_loc = self.output_location + "/" + out_folder.get()
+        self._makeDirectory(out_loc)
+
+        #extract all images from subfolders and all to payload array before main loop starts
+        for index, img in enumerate(self.payload):
+            if img.startswith("#FS"):
+                subItems = self._getSubDirItems(img[3:])
+                for item in subItems:
+                    self.payload.append("#" + img[3:] + "#" + item)
+                del self.payload[index]
+
+        out_name = ""
+        
+        for index, img_loc in enumerate(self.payload):
             
-        cv2.imwrite(out_loc + "/" + str(index) + "-" + str(out_name) + ".png", container)
 def makeImportFrame(frame, frame_title, img_array, img_list):
     create_lbl = tk.Label(frame, text=frame_title, bg=SECOND_COL, fg=TEXT_COL, font=(TEXT_FONT,11))
     create_lbl.place(x=15, y=10)
