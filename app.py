@@ -215,10 +215,6 @@ def makeOutputFrame(frame, frame_title, img_list, folder_name, operation):
     clearImages.place(x=380, y=6)
 
 
-def makeListbox(frame, h, w):
-    return Listbox(frame, height=h, width=w, bg=FIRST_COL, activestyle='dotbox', font="Helvetica", fg=SECOND_COL)
-
-
 def packInterface():
     global data_frame, host_frame, info_frame
     try:
