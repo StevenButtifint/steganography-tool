@@ -250,6 +250,25 @@ def packInterface():
 
 
 
+    def _extractInterface(self):
+        try:
+            self.data_frame.destroy()#place_forget()
+            self.host_frame.destroy()#place_forget()
+            self.info_frame.destroy()#place_forget()
+        except:
+            pass
+
+        self.container_frame = self._placeFrame(root, COLOUR_LIGHT, 0.95, 0.355, 0.025, 0.085)
+        #self.output_frame = self._placeFrame(root, COLOUR_LIGHT, 0.95, 0.355, 0.025, 0.46)
+        self.output_info_frame = self._placeFrame(root, COLOUR_LIGHT, 0.95, 0.138, 0.025, 0.84)
+
+        container_list = self._placeListbox(self.container_frame, 5, 40, 15, 40)
+        output_list = self._placeListbox(self.output_info_frame, 1, 40, 15, 40)
+        folder_name = self._placeEntry(self.output_info_frame, 12, 280, 10)
+
+        self._makeImportFrame(self.container_frame, "CONTAINERS", self.containers, container_list)
+        self._makeOutputFrame(self.output_info_frame, "OUTPUT", output_list, folder_name, self._extractData)
+
 
 if __name__ == "__main__":
     root = tk.Tk()
