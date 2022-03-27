@@ -249,32 +249,6 @@ def packInterface():
     makeOutputFrame(info_frame, "OUTPUT", output_list, folder_name, packData)
 
 
-def extractInterface():
-    global container_frame, output_info_frame
-    try:
-        data_frame.destroy()#place_forget()
-        host_frame.destroy()#place_forget()
-        info_frame.destroy()#place_forget()
-    except:
-        pass
-    
-    container_frame = tk.Frame(root, bg=SECOND_COL)
-    container_frame.place(relwidth=0.95, relheight=0.355, relx=0.025, rely=0.085)
-    output_frame = tk.Frame(root, bg=SECOND_COL)
-    output_frame.place(relwidth=0.95, relheight=0.355, relx=0.025, rely=0.46)
-    output_info_frame = tk.Frame(root, bg=SECOND_COL)
-    output_info_frame.place(relwidth=0.95, relheight=0.138, relx=0.025, rely=0.84)
-
-    container_list = makeListbox(container_frame, 5, 40)
-    container_list.place(x=15, y=40)
-
-    makeImportFrame(container_frame, "CONTAINERS", containers, container_list)
-
-    folder_name = tk.Entry(output_info_frame, width=12)
-    folder_name.place(x=280, y=10)
-    output_list = makeListbox(output_info_frame, 1, 40)
-    output_list.place(x=15, y=40)
-    makeOutputFrame(output_info_frame, "OUTPUT", output_list, folder_name, extractData)
 
 
 if __name__ == "__main__":
