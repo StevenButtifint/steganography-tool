@@ -233,6 +233,13 @@ def packInterface():
     output_list.place(x=15, y=40)
     makeOutputFrame(info_frame, "OUTPUT", output_list, folder_name, packData)
 
+    def _makeImportFrame(self, frame, frame_title, img_array, img_list):
+        self._placeLabel(frame, frame_title, COLOUR_LIGHT, COLOUR_TEXT, (TEXT_FONT,11), 15, 10)
+        self._placeButton(frame, "Import Folder System", 5, 2, COLOUR_BUTTON_TEXT, COLOUR_BUTTON, lambda: self._importFolderSystem(img_array, img_list), 140, 5)
+        self._placeButton(frame, "Import Image", 5, 2, COLOUR_BUTTON_TEXT, COLOUR_BUTTON, lambda: self._loadImages(img_array, img_list), 280, 5)
+        self._placeButton(frame, "Clear", 15, 2, COLOUR_BUTTON_TEXT, COLOUR_BUTTON, lambda: self._clearInput(img_array, img_list), 395, 5)
+
+
 
 
     def _extractInterface(self):
