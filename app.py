@@ -204,17 +204,6 @@ class Application:
         
         for index, img_loc in enumerate(self.payload):
             
-def makeOutputFrame(frame, frame_title, img_list, folder_name, operation):
-    info_lbl = tk.Label(frame, text=frame_title, bg=SECOND_COL, fg=TEXT_COL, font=(TEXT_FONT,11))
-    info_lbl.place(x=15, y=5)
-    addDir = tk.Button(frame, text="Set Output Location", padx=5, pady=2, fg="white", bg=BUTTON_COL, command= lambda: setOutputLocation(img_list))
-    addDir.place(x=100, y=5)
-    prefix_lbl = tk.Label(frame, text="Folder:", bg=SECOND_COL, fg=TEXT_COL, font=(TEXT_FONT,9))
-    prefix_lbl.place(x=235, y=7)
-    clearImages = tk.Button(frame, text="PROCESS", padx=10, pady=2, fg="white", bg=BUTTON_COL, command= lambda: operation(folder_name))
-    clearImages.place(x=380, y=6)
-
-
 def packInterface():
     global data_frame, host_frame, info_frame
     try:
