@@ -204,6 +204,20 @@ class Application:
         
         for index, img_loc in enumerate(self.payload):
             
+            if img_loc.startswith("#"):
+                img_loc = img_loc.split("#")
+                out_name = img_loc[2].removeprefix(img_loc[1]).replace("/", '#')[:-4]
+                img_loc = img_loc[2]
+
+            else:
+                out_name = os.path.basename(self.payload[index]).split(".")[0]
+                
+            host_index = index % len(self.hosts)
+            host_dir = self.hosts[host_index]
+
+            data = cv2.imread(img_loc)
+            container = cv2.imread(host_dir)
+
 
     def _makeImportFrame(self, frame, frame_title, img_array, img_list):
         self._placeLabel(frame, frame_title, COLOUR_LIGHT, COLOUR_TEXT, (TEXT_FONT,11), 15, 10)
