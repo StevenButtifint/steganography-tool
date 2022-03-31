@@ -204,34 +204,6 @@ class Application:
         
         for index, img_loc in enumerate(self.payload):
             
-def packInterface():
-    global data_frame, host_frame, info_frame
-    try:
-        container_frame.destroy()
-        output_info_frame.destroy()
-    except:
-        pass
-    
-    data_frame = tk.Frame(root, bg=SECOND_COL)
-    data_frame.place(relwidth=0.95, relheight=0.355, relx=0.025, rely=0.085)
-    host_frame = tk.Frame(root, bg=SECOND_COL)
-    host_frame.place(relwidth=0.95, relheight=0.355, relx=0.025, rely=0.46)
-    info_frame = tk.Frame(root, bg=SECOND_COL)
-    info_frame.place(relwidth=0.95, relheight=0.138, relx=0.025, rely=0.84)
-
-    payload_list = makeListbox(data_frame, 5, 40)
-    payload_list.place(x=15, y=40)
-    makeImportFrame(data_frame, "PAYLOAD", payload, payload_list)
-
-    host_list = makeListbox(host_frame, 5, 40)
-    host_list.place(x=15, y=40)
-    makeImportFrame(host_frame, "CONTAINERS", hosts, host_list)
-
-    folder_name = tk.Entry(info_frame, width=12)
-    folder_name.place(x=280, y=10)
-    output_list = makeListbox(info_frame, 1, 40)
-    output_list.place(x=15, y=40)
-    makeOutputFrame(info_frame, "OUTPUT", output_list, folder_name, packData)
 
     def _makeImportFrame(self, frame, frame_title, img_array, img_list):
         self._placeLabel(frame, frame_title, COLOUR_LIGHT, COLOUR_TEXT, (TEXT_FONT,11), 15, 10)
