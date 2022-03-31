@@ -218,6 +218,12 @@ class Application:
             data = cv2.imread(img_loc)
             container = cv2.imread(host_dir)
 
+            #make host 2x
+            data_h, data_w, _ = data.shape
+            container = cv2.resize(container, dsize=(int(data_w*2), int(data_h)), interpolation=cv2.INTER_CUBIC)
+
+            x_pix = 0
+                
 
     def _makeImportFrame(self, frame, frame_title, img_array, img_list):
         self._placeLabel(frame, frame_title, COLOUR_LIGHT, COLOUR_TEXT, (TEXT_FONT,11), 15, 10)
