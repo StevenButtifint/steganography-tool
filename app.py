@@ -267,6 +267,13 @@ class Application:
         self._placeButton(frame, "Clear", 15, 2, COLOUR_BUTTON_TEXT, COLOUR_BUTTON, lambda: self._clearInput(img_array, img_list), 395, 5)
 
 
+    def _makeOutputFrame(self, frame, frame_title, img_list, folder_name, operation):
+        self._placeLabel(frame, frame_title, COLOUR_LIGHT, COLOUR_TEXT, (TEXT_FONT,11), 15, 5)
+        self._placeLabel(frame, "Folder:", COLOUR_LIGHT, COLOUR_TEXT, (TEXT_FONT,9), 235, 7)
+        self._placeButton(frame, "Set Output Location", 5, 2, COLOUR_BUTTON_TEXT, COLOUR_BUTTON, lambda: self._setOutputLocation(img_list), 100, 5)
+        self._placeButton(frame, "PROCESS", 10, 2, COLOUR_BUTTON_TEXT, COLOUR_BUTTON, lambda: operation(folder_name), 380, 6)
+
+
 
 
     def _extractInterface(self):
