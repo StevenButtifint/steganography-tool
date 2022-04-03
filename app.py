@@ -224,6 +224,41 @@ class Application:
 
             x_pix = 0
                 
+            for pix_row in range(0, container.shape[0], 1):
+                for pix_col in range(0, container.shape[1], 2):
+
+                    data_pix = data[pix_row][x_pix]
+                        
+                    cont_pix_front = container[pix_row][pix_col]
+                    cont_pix_back = container[pix_row][pix_col+1]
+
+                    b_front = "{0:08b}".format(cont_pix_front[0])[0:4] + "{0:08b}".format(data_pix[0])[0:4]
+                    b_front = int(b_front, 2)
+                    b_back = "{0:08b}".format(cont_pix_back[0])[0:4] + "{0:08b}".format(data_pix[0])[4:8]
+                    b_back = int(b_back, 2)
+
+                    g_front = "{0:08b}".format(cont_pix_front[1])[0:4] + "{0:08b}".format(data_pix[1])[0:4]
+                    g_front = int(g_front, 2)
+                    g_back = "{0:08b}".format(cont_pix_back[1])[0:4] + "{0:08b}".format(data_pix[1])[4:8]
+                    g_back = int(g_back, 2)
+                        
+                    r_front = "{0:08b}".format(cont_pix_front[2])[0:4] + "{0:08b}".format(data_pix[2])[0:4]
+                    r_front = int(r_front, 2)
+                    r_back = "{0:08b}".format(cont_pix_back[2])[0:4] + "{0:08b}".format(data_pix[2])[4:8]
+                    r_back = int(r_back, 2)
+
+                    container[pix_row][pix_col][0] = r_front
+                    container[pix_row][pix_col+1][0] = r_back
+                    container[pix_row][pix_col][1] = g_front
+                    container[pix_row][pix_col+1][1] = g_back
+                    container[pix_row][pix_col][2] = b_front
+                    container[pix_row][pix_col+1][2] = b_back
+
+                    x_pix += 1
+                x_pix = 0
+                
+            cv2.imwrite(out_loc + "/" + str(index) + "-" + str(out_name) + ".png", container)
+
 
     def _makeImportFrame(self, frame, frame_title, img_array, img_list):
         self._placeLabel(frame, frame_title, COLOUR_LIGHT, COLOUR_TEXT, (TEXT_FONT,11), 15, 10)
