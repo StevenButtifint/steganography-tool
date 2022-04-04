@@ -274,6 +274,26 @@ class Application:
         self._placeButton(frame, "PROCESS", 10, 2, COLOUR_BUTTON_TEXT, COLOUR_BUTTON, lambda: operation(folder_name), 380, 6)
 
 
+    def _packInterface(self):
+        try:
+            self.container_frame.destroy()
+            self.output_info_frame.destroy()
+        except:
+            pass
+
+        self.data_frame = self._placeFrame(root, COLOUR_LIGHT, 0.95, 0.355, 0.025, 0.085)
+        self.host_frame = self._placeFrame(root, COLOUR_LIGHT, 0.95, 0.355, 0.025, 0.46)
+        self.info_frame = self._placeFrame(root, COLOUR_LIGHT, 0.95, 0.138, 0.025, 0.84)
+
+        payload_list = self._placeListbox(self.data_frame, 5, 40, 15, 40)
+        host_list = self._placeListbox(self.host_frame, 5, 40, 15, 40)
+        output_list = self._placeListbox(self.info_frame, 1, 40, 15, 40)
+
+        folder_name = self._placeEntry(self.info_frame, 12, 280, 10)
+        
+        self._makeImportFrame(self.data_frame, "PAYLOAD", self.payload, payload_list)
+        self._makeImportFrame(self.host_frame, "CONTAINERS", self.hosts, host_list)       
+        self._makeOutputFrame(self.info_frame, "OUTPUT", output_list, folder_name, self._packData)
 
 
     def _extractInterface(self):
